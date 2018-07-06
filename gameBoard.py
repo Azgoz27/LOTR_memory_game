@@ -96,10 +96,13 @@ class GameBoard(object):
         titleBG1 = self.titleFont.render(self.GAME_TITLE1, True, (0, 0, 0))
         titleBG2 = self.titleFont.render(self.GAME_TITLE2, True, (0, 0, 0))
         directions1 = self.directionsFont.render("Click Anywhere To Start!", True, (0, 0, 0))
+        author1 = self.directionsFont.render("Created by Tomislav S", True,(0, 0, 0))
         #yellow
         titleFG1 = self.titleFont.render(self.GAME_TITLE1, True, (255, 215, 0))
         titleFG2 = self.titleFont.render(self.GAME_TITLE2, True, (255, 215, 0))
         directions2 = self.directionsFont.render("Click Anywhere To Start!", True, (255, 215, 0))
+        author2 = author = self.directionsFont.render("Created by Tomislav S", True,(255, 215, 0))
+
 
 
         #display to SCREEN
@@ -108,8 +111,10 @@ class GameBoard(object):
         self.SCREEN.blit(titleBG2, (titleWidth2 - 4, titleHeight2 - 4))
         self.SCREEN.blit(titleFG1,(titleWidth1,titleHeight1))
         self.SCREEN.blit(titleFG2, (titleWidth2, titleHeight2))
-        self.SCREEN.blit(directions1,(titleWidth1 + 300,titleHeight1 + 490))
-        self.SCREEN.blit(directions2,(titleWidth1 + 303, titleHeight1 + 492))
+        self.SCREEN.blit(directions1,(titleWidth1 + 300,titleHeight1 + 440))
+        self.SCREEN.blit(directions2,(titleWidth1 + 303, titleHeight1 + 442))
+        self.SCREEN.blit(author1,(titleWidth1 + -200, titleHeight1 + 590))
+        self.SCREEN.blit(author2,(titleWidth1 + -197, titleHeight1 + 592))
 
         for event in pygame.event.get():
             if((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
