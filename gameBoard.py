@@ -19,7 +19,7 @@ class GameBoard(object):
         self.NUM_RANKS = 4
         self.images = []
         self.gamePieces = []
-        self.cardCover = []
+        #self.cardCover = []
         self.pairs = []
         self.ranks = []
         self.titleFont = ""
@@ -28,6 +28,13 @@ class GameBoard(object):
         self.background_Image = ""
         self.helpButton = ""
         self.clock = pygame.time
+        self.number_images = 4 #########
+        self.image_index = 0 ###########
+        self.sprite_width = 80
+        self.sprite_height = 80
+        self.sprite_y = 0
+        self.sprite_x = 80
+
 
     # initializes the screen size of the window
     def InitializeScreenSize(self, width, height):
@@ -44,18 +51,23 @@ class GameBoard(object):
     def InitializeGameData(self, totalPics):
         self.NUM_PICS = totalPics
 
+        #creating sheet
+        #self.total_cell_count = col * row
+
         # stores the playing cards (images)
         for x in range(self.NUM_PICS):
             self.images.append(pygame.image.load(os.path.join("data/img/",
-                "img%d.png" % (x+1))))
+                "img%d.png" % (x+1))).convert_alpha())
+
+
         # stores the rank images
         for x in range(self.NUM_RANKS):
             self.ranks.append(pygame.image.load(os.path.join("data/img/",
                 "rank%d.png" % (x+1))))
         # stores the back side of the cards
-        for x in range(self.NUM_CARDS):
-            self.cardCover.append(pygame.image.load(os.path.join("data/img/",
-                "card.png")))
+        #for x in range(self.NUM_CARDS):
+        #   self.cardCover.append(pygame.image.load(os.path.join("data/img/",
+        #        "card.png")))
 
         # load fonts into the game
         self.titleFont = pygame.font.Font(os.path.join("data/fnt/","anirb.TTF"),50)
@@ -66,7 +78,7 @@ class GameBoard(object):
         self.background_Image = pygame.image.load(os.path.join("data/img/","back.png"))
         self.helpButton = pygame.image.load(os.path.join("data/img/","Help_Turquoise.png"))
 
-    # after a game is over re initialize the game board and cards
+    # after a game is over re-initialize the game board and cards
     def ReInitializeBoard(self):
         del self.pairs[:]
         del self.gamePieces[:]
@@ -158,47 +170,92 @@ class GameBoard(object):
     def DisplayGameBoard(self):
         # do this if we have at least 1 card selected
         if (self.NumPairs() >= 1):
+            #self.image_index = 4
             width = 80  ## print row 1
             for row1 in range(0, 6):
                 if(self.IsSelectedImage(row1)):
                     # print("TRUE = ",row1)
-                    self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE))
+                    if (self.image_index <= self.number_images -1):
+                        self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE),
+                                     (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                      self.sprite_height))
+                        self.image_index += 1
+                    else:
+                        self.image_index -= 1
+                        self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE),
+                                         (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                          self.sprite_height))
+
                 else:
-                    #print("FALSE = ",row1)
-                    self.SCREEN.blit(self.cardCover[row1],(width, self.ROW_ONE))
+                    self.SCREEN.blit(self.gamePieces[row1], (width, self.ROW_ONE),
+                                     ( 0 * self.sprite_x, self.sprite_y, self.sprite_width,
+                                      self.sprite_height))
                 width += 100
 
             width = 80 ## print row 2
+            #self.image_index = 4
             for row2 in range(6, 12):
-                if(self.IsSelectedImage(row2)):
-                    self.SCREEN.blit(self.gamePieces[row2],(width, self.ROW_TWO))
+                if (self.IsSelectedImage(row2)):
+                    # print("TRUE = ",row1)
+                    if (self.image_index <= self.number_images - 1):
+                        self.SCREEN.blit(self.gamePieces[row2], (width, self.ROW_TWO),
+                                         (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                          self.sprite_height))
+                        self.image_index += 1
+                    else:
+                        self.image_index -= 1
+                        self.SCREEN.blit(self.gamePieces[row2], (width, self.ROW_TWO),
+                                         (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                          self.sprite_height))
+
                 else:
-                    self.SCREEN.blit(self.cardCover[row2],(width, self.ROW_TWO))
+                    self.SCREEN.blit(self.gamePieces[row2], (width, self.ROW_TWO),
+                                     (0 * self.sprite_x, self.sprite_y, self.sprite_width,
+                                      self.sprite_height))
                 width += 100
 
             width = 80 ## print row 3
+            #self.image_index = 4
             for row3 in range(12, 18):
-                if(self.IsSelectedImage(row3)):
-                    self.SCREEN.blit(self.gamePieces[row3],(width,self.ROW_THREE))
+                if (self.IsSelectedImage(row3)):
+                    # print("TRUE = ",row1)
+                    if (self.image_index <= self.number_images - 1):
+                        self.SCREEN.blit(self.gamePieces[row3], (width, self.ROW_THREE),
+                                         (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                          self.sprite_height))
+                        self.image_index += 1
+                    else:
+                        self.image_index -= 1
+                        self.SCREEN.blit(self.gamePieces[row3], (width, self.ROW_THREE),
+                                         (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                          self.sprite_height))
+
                 else:
-                    self.SCREEN.blit(self.cardCover[row3],(width,self.ROW_THREE))
+                    self.SCREEN.blit(self.gamePieces[row3], (width, self.ROW_THREE),
+                                     (0 * self.sprite_x, self.sprite_y, self.sprite_width,
+                                      self.sprite_height))
                 width += 100
 
         # NO MATCHES HAVE BEEN FOUND
         else:
             width = 80 ## print row 1
             for row1 in range(0, 6):
-                self.SCREEN.blit(self.cardCover[row1],(width,self.ROW_ONE))
+                self.SCREEN.blit(self.gamePieces[row1],(width,self.ROW_ONE),
+                                 (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                  self.sprite_height))
                 width += 100
             width = 80 ## print row 2
-
             for row2 in range(6, 12):
-                self.SCREEN.blit(self.cardCover[row2],(width,self.ROW_TWO))
+                self.SCREEN.blit(self.gamePieces[row2],(width,self.ROW_TWO),
+                                 (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                  self.sprite_height))
                 width += 100
 
             width = 80 ## print row 3
             for row3 in range(12, 18):
-                self.SCREEN.blit(self.cardCover[row3],(width,self.ROW_THREE))
+                self.SCREEN.blit(self.gamePieces[row3],(width,self.ROW_THREE),
+                                     (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                      self.sprite_height))
                 width += 100
 
     # determines if a specific card has been selected within our list

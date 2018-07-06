@@ -47,7 +47,7 @@ def main():
     # this is the main game loop which is the START OF THE GAME
     while(inGame):
         game_Board.DisplayIngameBackground(numGuesses, numPairs)
-        game_Music.PlayInGame()
+        #game_Music.PlayInGame()
 
         # if the game has not ended, keep going
         if(numPairs < NUM_PAIRS):
@@ -66,7 +66,7 @@ def main():
                 if((SELECTION_ONE > -1) and (SELECTION_TWO > -1)):
                     #print(SELECTION_ONE)
                     #print(SELECTION_TWO)
-                    clock.wait(1500)
+                    clock.wait(1000)
 
                     # event handling loop - discard any selections
                     # the user makes while detrmining a match
