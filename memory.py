@@ -109,7 +109,8 @@ def main():
                         #print("HELP ICON")
                         game_Music.PauseInGame()
                         game_Music.PlayHelp()
-                        inGame = game_Board.DisplayHelp()
+                        #inGame = game_Board.DisplayHelp()
+                        inGame = game_Board.setup_menu()
                         game_Music.StopHelp()
                         game_Music.ResumeInGame()
 

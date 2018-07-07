@@ -156,34 +156,36 @@ class GameBoard(object):
         input_width_3 = 300
         input_height_3 = 300
 
-        # black font
-        input_bg_1 = self.input_font.render("Please enter the number of columns: ", True, (0, 0, 0))
-        input_bg_2 = self.input_font.render("Please enter the number of rows: ", True, (0, 0, 0))
-        input_bg_3 = self.input_font.render("Please enter the number of Players: ", True, (0, 0, 0))
+        while (not inGame):
 
-        # yellow font
-        input_fg_1 = self.input_font.render("Please enter the number of columns: ", True, (255, 215, 0))
-        input_fg_2 = self.input_font.render("Please enter the number of rows: ", True, (255, 215, 0))
-        input_fg_3 = self.input_font.render("Please enter the number of players: ", True, (255, 215, 0))
+            # black font
+            input_bg_1 = self.input_font.render("Please enter the number of columns: ", True, (0, 0, 0))
+            input_bg_2 = self.input_font.render("Please enter the number of rows: ", True, (0, 0, 0))
+            input_bg_3 = self.input_font.render("Please enter the number of Players: ", True, (0, 0, 0))
 
-        self.SCREEN.blit(self.table, (0,0))
-        self.SCREEN.blit(self.start_button, (500,500))
-        self.SCREEN.blit(input_bg_1, (input_width_1 - 4, input_height_1 - 4))
-        self.SCREEN.blit(input_bg_2, (input_width_2 - 4, input_height_2 - 4))
-        self.SCREEN.blit(input_bg_3, (input_width_3 - 4, input_height_3 - 4))
-        self.SCREEN.blit(input_fg_1, (input_width_1, input_height_1))
-        self.SCREEN.blit(input_fg_2, (input_width_2, input_height_2))
-        self.SCREEN.blit(input_fg_3, (input_width_3, input_height_3))
+            # yellow font
+            input_fg_1 = self.input_font.render("Please enter the number of columns: ", True, (255, 215, 0))
+            input_fg_2 = self.input_font.render("Please enter the number of rows: ", True, (255, 215, 0))
+            input_fg_3 = self.input_font.render("Please enter the number of players: ", True, (255, 215, 0))
 
-        for event in pygame.event.get():
-            if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
-                pygame.quit()
-                sys.exit()
-            elif (event.type == MOUSEBUTTONUP):
-                pygame.display.flip()
-                return True
-        pygame.display.flip()
-        return False
+            self.SCREEN.blit(self.table, (0,0))
+            self.SCREEN.blit(self.start_button, (500,500))
+            self.SCREEN.blit(input_bg_1, (input_width_1 - 4, input_height_1 - 4))
+            self.SCREEN.blit(input_bg_2, (input_width_2 - 4, input_height_2 - 4))
+            self.SCREEN.blit(input_bg_3, (input_width_3 - 4, input_height_3 - 4))
+            self.SCREEN.blit(input_fg_1, (input_width_1, input_height_1))
+            self.SCREEN.blit(input_fg_2, (input_width_2, input_height_2))
+            self.SCREEN.blit(input_fg_3, (input_width_3, input_height_3))
+
+            for event in pygame.event.get():
+                if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
+                    pygame.quit()
+                    sys.exit()
+                elif (event.type == MOUSEBUTTONUP):
+                    pygame.display.flip()
+                    return True
+            pygame.display.flip()
+
 
         ###################################################################
         # self.col_number = input("Please enter the number of columns: ")
@@ -195,97 +197,6 @@ class GameBoard(object):
         ###################################################################
 
         #return self.col_number, self.row_number
-
-        # display the help menu to the screen
-        def DisplayHelp(self):
-            inGame = False
-            titleWidth1 = 100
-            titleHeight1 = 150
-            t1 = "Kenneth's Memory Game is a mind stimulating educational"
-            t2 = "card game in which an assortment of cards are laid face "
-            t3 = "down on a surface, and the player tries to uncover two"
-            t4 = "identical pairs. If the two cards match, they are"
-            t5 = "removed from gameplay. If they do not match, the cards"
-            t6 = "are turned back over. The object of the game is to find"
-            t7 = "pairs of two matching cards in the fewest number of"
-            t8 = "turns possible. This game can be played alone or with"
-            t9 = "multiple players, and is especially challenging for children"
-            t10 = "and adults alike."
-            screenTitle = "About"
-
-            self.SCREEN.blit(self.background_Image, (0, 0))
-
-            while (not inGame):
-                self.clock.wait(70)
-                # directions
-                # black
-                titleBG = self.titleFont.render(screenTitle, True, (0, 0, 0))
-                # yellow
-                titleFG = self.titleFont.render(screenTitle, True, (225, 225, 0))
-                resumeGame = self.proceed.render("Click Anywhere To Continue!", True, (255, 255, 255))
-                BG = (0, 0, 0)
-                FG = (255, 255, 0)
-                t1BG = self.helpDescrFont.render(t1, True, (BG))
-                t1FG = self.helpDescrFont.render(t1, True, (FG))
-                t2BG = self.helpDescrFont.render(t2, True, (BG))
-                t2FG = self.helpDescrFont.render(t2, True, (FG))
-                t3BG = self.helpDescrFont.render(t3, True, (BG))
-                t3FG = self.helpDescrFont.render(t3, True, (FG))
-                t4BG = self.helpDescrFont.render(t4, True, (BG))
-                t4FG = self.helpDescrFont.render(t4, True, (FG))
-                t5BG = self.helpDescrFont.render(t5, True, (BG))
-                t5FG = self.helpDescrFont.render(t5, True, (FG))
-                t6BG = self.helpDescrFont.render(t6, True, (BG))
-                t6FG = self.helpDescrFont.render(t6, True, (FG))
-
-                t7BG = self.helpDescrFont.render(t7, True, (BG))
-                t7FG = self.helpDescrFont.render(t7, True, (FG))
-                t8BG = self.helpDescrFont.render(t8, True, (BG))
-                t8FG = self.helpDescrFont.render(t8, True, (FG))
-                t9BG = self.helpDescrFont.render(t9, True, (BG))
-                t9FG = self.helpDescrFont.render(t9, True, (FG))
-                t10BG = self.helpDescrFont.render(t10, True, (BG))
-                t10FG = self.helpDescrFont.render(t10, True, (FG))
-
-                # display to SCREEN
-                width = 40
-                height = 140
-                offset = 3
-                newLine = 35
-                self.SCREEN.blit(t1BG, (width, height))
-                self.SCREEN.blit(t1FG, (width - offset, height - offset))
-                self.SCREEN.blit(t2BG, (width, height + newLine))
-                self.SCREEN.blit(t2FG, (width - offset, (height + newLine) - offset))
-                self.SCREEN.blit(t3BG, (width, height + (newLine * 2)))
-                self.SCREEN.blit(t3FG, (width - offset, (height + (newLine * 2)) - offset))
-                self.SCREEN.blit(t4BG, (width, height + (newLine * 3)))
-                self.SCREEN.blit(t4FG, (width - offset, (height + (newLine * 3)) - offset))
-                self.SCREEN.blit(t5BG, (width, height + (newLine * 4)))
-                self.SCREEN.blit(t5FG, (width - offset, (height + (newLine * 4)) - offset))
-                self.SCREEN.blit(t6BG, (width, height + (newLine * 5)))
-                self.SCREEN.blit(t6FG, (width - offset, (height + (newLine * 5)) - offset))
-                self.SCREEN.blit(t7BG, (width, height + (newLine * 6)))
-                self.SCREEN.blit(t7FG, (width - offset, (height + (newLine * 6)) - offset))
-                self.SCREEN.blit(t8BG, (width, height + (newLine * 7)))
-                self.SCREEN.blit(t8FG, (width - offset, (height + (newLine * 7)) - offset))
-                self.SCREEN.blit(t9BG, (width, height + (newLine * 8)))
-                self.SCREEN.blit(t9FG, (width - offset, (height + (newLine * 8)) - offset))
-                self.SCREEN.blit(t10BG, (width, height + (newLine * 9)))
-                self.SCREEN.blit(t10FG, (width - offset, (height + (newLine * 9)) - offset))
-
-                self.SCREEN.blit(titleBG, (75 - 4, 45 - 4))
-                self.SCREEN.blit(titleFG, (75, 45))
-                self.SCREEN.blit(resumeGame, (90, 515))
-                pygame.display.flip()
-
-                for event in pygame.event.get():
-                    if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
-                        return False
-                    elif (event.type == MOUSEBUTTONUP):
-                        self.DisplayWhiteScreen()
-                        pygame.display.flip()
-                return True
-
 
 
 
