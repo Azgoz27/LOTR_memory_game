@@ -99,4 +99,3 @@ class Music(object):
     def StopHelp(self):
         self.helpMusic.stop()
         self.semaphore = True
-# http://programmingnotes.freeweq.com/

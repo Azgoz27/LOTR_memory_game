@@ -7,8 +7,6 @@ from gameMusic import *
 
 # These are default attributes that will be used for the program. They're
 # passed to the "gameBoard" class and can be changed in the future if so desired
-TITLE_CAPTION = "THE LORD OF THE RINGS - MEMORY GAME"
-NUM_PICS = 27 # total num of pics (game cards) which are in the "data/img" folder
 NUM_PAIRS = 9 # total num of possible matching pairs at any given time
 
 
@@ -27,18 +25,18 @@ def main():
     # pre initialize the screen size and game board
     os.environ["SDL_VIDEO_CENTERED"] = '1' # place screen in the middle of monitor
     game_Board.InitializeScreenSize()
-    game_Board.SetGameTitle(TITLE_CAPTION)
-    game_Board.InitializeGameData(NUM_PICS)
+    game_Board.SetGameTitle()
+    game_Board.InitializeGameData()
     game_Board.RandomizeGamePieces()
-
+    game_Board.DisplayStartScreen()
     # start the intro music
     #game_Music.PlayIntro()
 
     # this displays the initial START MENU to the screen
     while(not inGame):
         inGame = game_Board.DisplayStartScreen()
-        #inGame = game_Board.setup_menu()
-        clock.wait(70) # do this so the CPU doesnt work too hard
+    #    inGame = game_Board.setup_menu()
+    #    clock.wait(70) # do this so the CPU doesnt work too hard
 
     # stop the intro music
     game_Music.StopIntro()
@@ -145,7 +143,7 @@ def main():
             game_Music.PlayGameOver()
             inGame = game_Board.GameOver(numGuesses)
             game_Music.StopGameOver()
-            game_Board.DisplayWhiteScreen()
+            #game_Board.DisplayWhiteScreen()
             game_Board.ReInitializeBoard()
             numGuesses = 0
             numPairs = 0
@@ -159,4 +157,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# http://programmingnotes.freeweq.com/

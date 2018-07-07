@@ -11,8 +11,8 @@ class GameBoard(object):
         self.ROW_ONE = 100
         self.ROW_TWO = 250
         self.ROW_THREE = 400
-        self.WINDOW_WIDTH = 740
-        self.WINDOW_HEIGHT = 600
+        self.WINDOW_WIDTH = 1440
+        self.WINDOW_HEIGHT = 900
         self.NUM_PICS = 27
         self.NUM_CARDS = 18
         self.NUM_PAIRS = 9
@@ -23,13 +23,19 @@ class GameBoard(object):
         self.pairs = []
         self.ranks = []
         self.titleFont = ""
-        self.directionsFont = ""
+        self.input_font = ""
+        self.proceed = ""
         self.helpFont = ""
         self.background_Image = ""
+        self.table = ""
         self.helpButton = ""
+        self.start_button =""
+        self.rank_button = ""
         self.clock = pygame.time
-        self.number_images = 4 #########
-        self.image_index = 0 ###########
+        self.col_number = 0
+        self.row_number = 0
+        self.number_images = 4
+        self.image_index = 0
         self.sprite_width = 80
         self.sprite_height = 80
         self.sprite_y = 0
@@ -37,107 +43,257 @@ class GameBoard(object):
 
 
     # initializes the screen size of the window
-    def InitializeScreenSize(self, width, height):
-        self.WINDOW_WIDTH = width
-        self.WINDOW_HEIGHT = height
+    def InitializeScreenSize(self):
         self.SCREEN = pygame.display.set_mode((self.WINDOW_WIDTH,self.WINDOW_HEIGHT))
 
+
     # sets the game title
-    def SetGameTitle(self, title):
-        self.TITLE_CAPTION = title
+    def SetGameTitle(self):
         pygame.display.set_caption(self.TITLE_CAPTION)
 
+
     # gets data (img files) from the folder and stores them into various lists
-    def InitializeGameData(self, totalPics):
-        self.NUM_PICS = totalPics
-
-        #creating sheet
-        #self.total_cell_count = col * row
-
-        # stores the playing cards (images)
+    def InitializeGameData(self):
+       # stores the playing cards (images)
         for x in range(self.NUM_PICS):
             self.images.append(pygame.image.load(os.path.join("data/img/",
                 "img%d.png" % (x+1))).convert_alpha())
 
-
+        ##########################################################################
         # stores the rank images
         for x in range(self.NUM_RANKS):
-            self.ranks.append(pygame.image.load(os.path.join("data/img/",
-                "rank%d.png" % (x+1))))
-        # stores the back side of the cards
-        #for x in range(self.NUM_CARDS):
-        #   self.cardCover.append(pygame.image.load(os.path.join("data/img/",
-        #        "card.png")))
+            #self.ranks.append(pygame.image.load(os.path.join("data/img/",
+            #    "rank%d.png" % (x+1))))
+            self.ranks.append(pygame.image.load(os.path.join("data/img/","rank.png")))
+        ##########################################################################
+
+        #load background images
+        self.table = (pygame.image.load(os.path.join("data/img/", "table.png")))
+        self.background_Image = pygame.image.load(os.path.join("data/img/", "back.png"))
 
         # load fonts into the game
-        self.titleFont = pygame.font.Font(os.path.join("data/fnt/","anirb.TTF"),50)
-        self.directionsFont = pygame.font.Font(os.path.join("data/fnt/","RING.TTF"),35)
-        self.helpFont = pygame.font.Font(os.path.join("data/fnt/","scribble.TTF"),14)
-        self.helpDescrFont = pygame.font.Font(os.path.join("data/fnt/","ShakeThatBooty.ttf"),30)
-        self.currentScoreFont = pygame.font.Font(os.path.join("data/fnt/","ShakeThatBooty.ttf"),30)
-        self.background_Image = pygame.image.load(os.path.join("data/img/","back.png"))
-        self.helpButton = pygame.image.load(os.path.join("data/img/","Help_Turquoise.png"))
+        self.titleFont = pygame.font.Font(os.path.join("data/fnt/","anirb.ttf"),50)
+        self.proceed = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),35)
+        self.input_font = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),14)
 
-    # after a game is over re-initialize the game board and cards
-    def ReInitializeBoard(self):
-        del self.pairs[:]
-        del self.gamePieces[:]
-        self.RandomizeGamePieces()
+       #################################################################################
+        self.helpButton = pygame.image.load(os.path.join("data/img/", "restart.png"))  ###
+        self.start_button = pygame.image.load(os.path.join("data/img/","start.png"))
+        self.rank_button = pygame.image.load(os.path.join("data/img/", "rank.png"))
+
+        self.helpFont = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),14)####
+        self.helpDescrFont = pygame.font.Font(os.path.join("data/fnt/","anirm.ttf"),30)###
+        self.currentScoreFont = pygame.font.Font(os.path.join("data/fnt/","anirm.ttf"),30)###
+        #################################################################################
+
 
     # randomizes the game pieces (images) inside the list using "shuffle"
     def RandomizeGamePieces(self):
-        random.shuffle(self.images)
-        #random.shuffle(self.images)
-        for x in range(self.NUM_PAIRS):
-            self.gamePieces.append(self.images[x])
+        random.shuffle(self.images) ####promješa 27 učitanih slika
+        #self.NUM_PAIRS = (self.col_number * self.row_number) / 2   ####broj parova koji trebam
+        for x in range(self.NUM_PAIRS):  #učitaj 1 kartu po paru iz promješanog špila
+            self.gamePieces.append(self.images[x]) #kreiram gamePieces listu
 
-        random.shuffle(self.gamePieces)
+        random.shuffle(self.gamePieces)  #opet mješamo listu
 
         for x in range(self.NUM_PAIRS, self.NUM_CARDS):
             self.gamePieces.append(self.gamePieces[x-self.NUM_PAIRS])
 
-        random.shuffle(self.gamePieces)
+        random.shuffle(self.gamePieces) #opet mješamo listu
+
+
 
     # before the game starts, this initializes the start Menu
     def DisplayStartScreen(self):
-        titleWidth1 = 225
-        titleHeight1 = 250
-        titleWidth2 = 350
-        titleHeight2 = 400
-        #black
+        title_width_1 = 225
+        title_height_1 = 250
+        title_width_2 = 350
+        title_height_2 = 400
+
+        #black font
         titleBG1 = self.titleFont.render(self.GAME_TITLE1, True, (0, 0, 0))
         titleBG2 = self.titleFont.render(self.GAME_TITLE2, True, (0, 0, 0))
-        directions1 = self.directionsFont.render("Click Anywhere To Start!", True, (0, 0, 0))
-        author1 = self.directionsFont.render("Created by Tomislav S", True,(0, 0, 0))
-        #yellow
+        proceed1 = self.proceed.render("Click Anywhere To Start!", True, (0, 0, 0))
+        author1 = self.proceed.render("Created by Tomislav S", True,(0, 0, 0))
+
+        #yellow font
         titleFG1 = self.titleFont.render(self.GAME_TITLE1, True, (255, 215, 0))
         titleFG2 = self.titleFont.render(self.GAME_TITLE2, True, (255, 215, 0))
-        directions2 = self.directionsFont.render("Click Anywhere To Start!", True, (255, 215, 0))
-        author2 = author = self.directionsFont.render("Created by Tomislav S", True,(255, 215, 0))
-
-
+        proceed2 = self.proceed.render("Click Anywhere To Start!", True, (255, 215, 0))
+        author2 = self.proceed.render("Created by Tomislav S", True,(255, 215, 0))
 
         #display to SCREEN
         self.SCREEN.blit(self.background_Image,(0, 0))
-        self.SCREEN.blit(titleBG1,(titleWidth1 - 4,titleHeight1 - 4))
-        self.SCREEN.blit(titleBG2, (titleWidth2 - 4, titleHeight2 - 4))
-        self.SCREEN.blit(titleFG1,(titleWidth1,titleHeight1))
-        self.SCREEN.blit(titleFG2, (titleWidth2, titleHeight2))
-        self.SCREEN.blit(directions1,(titleWidth1 + 300,titleHeight1 + 440))
-        self.SCREEN.blit(directions2,(titleWidth1 + 303, titleHeight1 + 442))
-        self.SCREEN.blit(author1,(titleWidth1 + -200, titleHeight1 + 590))
-        self.SCREEN.blit(author2,(titleWidth1 + -197, titleHeight1 + 592))
+        self.SCREEN.blit(titleBG1,(title_width_1 - 4,title_height_1 - 4))
+        self.SCREEN.blit(titleBG2, (title_width_2 - 4, title_height_2 - 4))
+        self.SCREEN.blit(titleFG1,(title_width_1,title_height_1))
+        self.SCREEN.blit(titleFG2, (title_width_2, title_height_2))
+        self.SCREEN.blit(proceed1,(title_width_1 + 300,title_height_1 + 440))
+        self.SCREEN.blit(proceed2,(title_width_1 + 303, title_height_1 + 442))
+        self.SCREEN.blit(author1,(title_width_1 + -200, title_height_1 + 590))
+        self.SCREEN.blit(author2,(title_width_1 + -197, title_height_1 + 592))
 
         for event in pygame.event.get():
             if((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
                 pygame.quit()
                 sys.exit()
             elif(event.type == MOUSEBUTTONUP):
-                self.DisplayWhiteScreen()
+                self.setup_menu()
                 pygame.display.flip()
                 return True
         pygame.display.flip()
         return False
+
+
+     #setup menu
+    def setup_menu(self):
+        inGame = False
+
+        input_width_1 = 100
+        input_height_1 = 100
+        input_width_2 = 200
+        input_height_2 = 200
+        input_width_3 = 300
+        input_height_3 = 300
+
+        # black font
+        input_bg_1 = self.input_font.render("Please enter the number of columns: ", True, (0, 0, 0))
+        input_bg_2 = self.input_font.render("Please enter the number of rows: ", True, (0, 0, 0))
+        input_bg_3 = self.input_font.render("Please enter the number of Players: ", True, (0, 0, 0))
+
+        # yellow font
+        input_fg_1 = self.input_font.render("Please enter the number of columns: ", True, (255, 215, 0))
+        input_fg_2 = self.input_font.render("Please enter the number of rows: ", True, (255, 215, 0))
+        input_fg_3 = self.input_font.render("Please enter the number of players: ", True, (255, 215, 0))
+
+        self.SCREEN.blit(self.table, (0,0))
+        self.SCREEN.blit(self.start_button, (500,500))
+        self.SCREEN.blit(input_bg_1, (input_width_1 - 4, input_height_1 - 4))
+        self.SCREEN.blit(input_bg_2, (input_width_2 - 4, input_height_2 - 4))
+        self.SCREEN.blit(input_bg_3, (input_width_3 - 4, input_height_3 - 4))
+        self.SCREEN.blit(input_fg_1, (input_width_1, input_height_1))
+        self.SCREEN.blit(input_fg_2, (input_width_2, input_height_2))
+        self.SCREEN.blit(input_fg_3, (input_width_3, input_height_3))
+
+        for event in pygame.event.get():
+            if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
+                pygame.quit()
+                sys.exit()
+            elif (event.type == MOUSEBUTTONUP):
+                pygame.display.flip()
+                return True
+        pygame.display.flip()
+        return False
+
+        ###################################################################
+        # self.col_number = input("Please enter the number of columns: ")
+        # if self.col_number % 2 != 0:
+        #    self.col_number -= 1
+        # self.row_number = input("Please enter the number or rows: ")
+        # if self.row_number % 2 != 0:
+        #    self.row_number -= 1
+        ###################################################################
+
+        #return self.col_number, self.row_number
+
+        # display the help menu to the screen
+        def DisplayHelp(self):
+            inGame = False
+            titleWidth1 = 100
+            titleHeight1 = 150
+            t1 = "Kenneth's Memory Game is a mind stimulating educational"
+            t2 = "card game in which an assortment of cards are laid face "
+            t3 = "down on a surface, and the player tries to uncover two"
+            t4 = "identical pairs. If the two cards match, they are"
+            t5 = "removed from gameplay. If they do not match, the cards"
+            t6 = "are turned back over. The object of the game is to find"
+            t7 = "pairs of two matching cards in the fewest number of"
+            t8 = "turns possible. This game can be played alone or with"
+            t9 = "multiple players, and is especially challenging for children"
+            t10 = "and adults alike."
+            screenTitle = "About"
+
+            self.SCREEN.blit(self.background_Image, (0, 0))
+
+            while (not inGame):
+                self.clock.wait(70)
+                # directions
+                # black
+                titleBG = self.titleFont.render(screenTitle, True, (0, 0, 0))
+                # yellow
+                titleFG = self.titleFont.render(screenTitle, True, (225, 225, 0))
+                resumeGame = self.proceed.render("Click Anywhere To Continue!", True, (255, 255, 255))
+                BG = (0, 0, 0)
+                FG = (255, 255, 0)
+                t1BG = self.helpDescrFont.render(t1, True, (BG))
+                t1FG = self.helpDescrFont.render(t1, True, (FG))
+                t2BG = self.helpDescrFont.render(t2, True, (BG))
+                t2FG = self.helpDescrFont.render(t2, True, (FG))
+                t3BG = self.helpDescrFont.render(t3, True, (BG))
+                t3FG = self.helpDescrFont.render(t3, True, (FG))
+                t4BG = self.helpDescrFont.render(t4, True, (BG))
+                t4FG = self.helpDescrFont.render(t4, True, (FG))
+                t5BG = self.helpDescrFont.render(t5, True, (BG))
+                t5FG = self.helpDescrFont.render(t5, True, (FG))
+                t6BG = self.helpDescrFont.render(t6, True, (BG))
+                t6FG = self.helpDescrFont.render(t6, True, (FG))
+
+                t7BG = self.helpDescrFont.render(t7, True, (BG))
+                t7FG = self.helpDescrFont.render(t7, True, (FG))
+                t8BG = self.helpDescrFont.render(t8, True, (BG))
+                t8FG = self.helpDescrFont.render(t8, True, (FG))
+                t9BG = self.helpDescrFont.render(t9, True, (BG))
+                t9FG = self.helpDescrFont.render(t9, True, (FG))
+                t10BG = self.helpDescrFont.render(t10, True, (BG))
+                t10FG = self.helpDescrFont.render(t10, True, (FG))
+
+                # display to SCREEN
+                width = 40
+                height = 140
+                offset = 3
+                newLine = 35
+                self.SCREEN.blit(t1BG, (width, height))
+                self.SCREEN.blit(t1FG, (width - offset, height - offset))
+                self.SCREEN.blit(t2BG, (width, height + newLine))
+                self.SCREEN.blit(t2FG, (width - offset, (height + newLine) - offset))
+                self.SCREEN.blit(t3BG, (width, height + (newLine * 2)))
+                self.SCREEN.blit(t3FG, (width - offset, (height + (newLine * 2)) - offset))
+                self.SCREEN.blit(t4BG, (width, height + (newLine * 3)))
+                self.SCREEN.blit(t4FG, (width - offset, (height + (newLine * 3)) - offset))
+                self.SCREEN.blit(t5BG, (width, height + (newLine * 4)))
+                self.SCREEN.blit(t5FG, (width - offset, (height + (newLine * 4)) - offset))
+                self.SCREEN.blit(t6BG, (width, height + (newLine * 5)))
+                self.SCREEN.blit(t6FG, (width - offset, (height + (newLine * 5)) - offset))
+                self.SCREEN.blit(t7BG, (width, height + (newLine * 6)))
+                self.SCREEN.blit(t7FG, (width - offset, (height + (newLine * 6)) - offset))
+                self.SCREEN.blit(t8BG, (width, height + (newLine * 7)))
+                self.SCREEN.blit(t8FG, (width - offset, (height + (newLine * 7)) - offset))
+                self.SCREEN.blit(t9BG, (width, height + (newLine * 8)))
+                self.SCREEN.blit(t9FG, (width - offset, (height + (newLine * 8)) - offset))
+                self.SCREEN.blit(t10BG, (width, height + (newLine * 9)))
+                self.SCREEN.blit(t10FG, (width - offset, (height + (newLine * 9)) - offset))
+
+                self.SCREEN.blit(titleBG, (75 - 4, 45 - 4))
+                self.SCREEN.blit(titleFG, (75, 45))
+                self.SCREEN.blit(resumeGame, (90, 515))
+                pygame.display.flip()
+
+                for event in pygame.event.get():
+                    if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
+                        return False
+                    elif (event.type == MOUSEBUTTONUP):
+                        self.DisplayWhiteScreen()
+                        pygame.display.flip()
+                return True
+
+
+
+
+    # after a game is over re-initialize the game board and cards
+    def ReInitializeBoard(self):
+        del self.pairs[:]
+        del self.gamePieces[:]
+        self.RandomizeGamePieces()
 
     # displays the main background image (the table and the help button)
     def DisplayIngameBackground(self,numGuesses,numPairs):
@@ -347,101 +503,16 @@ class GameBoard(object):
                 elif(event.type == MOUSEBUTTONUP):
                     return True
 
-    # display the help menu to the screen
-    def DisplayHelp(self):
-        inGame = False
-        titleWidth1 = 100
-        titleHeight1 = 150
-        t1 = "Kenneth's Memory Game is a mind stimulating educational"
-        t2 = "card game in which an assortment of cards are laid face "
-        t3 = "down on a surface, and the player tries to uncover two"
-        t4 = "identical pairs. If the two cards match, they are"
-        t5 = "removed from gameplay. If they do not match, the cards"
-        t6 = "are turned back over. The object of the game is to find"
-        t7 = "pairs of two matching cards in the fewest number of"
-        t8 = "turns possible. This game can be played alone or with"
-        t9 = "multiple players, and is especially challenging for children"
-        t10 = "and adults alike."
-        screenTitle = "About"
 
-        self.SCREEN.blit(self.background_Image,(0,0))
-
-        while(not inGame):
-            self.clock.wait(70)
-            #directions
-            #black
-            titleBG = self.titleFont.render(screenTitle, True, (0,0,0))
-            #yellow
-            titleFG = self.titleFont.render(screenTitle, True, (225,225,0))
-            resumeGame = self.directionsFont.render("Click Anywhere To Continue!", True, (255,255,255))
-            BG = (0,0,0)
-            FG = (255,255,0)
-            t1BG = self.helpDescrFont.render(t1, True, (BG))
-            t1FG = self.helpDescrFont.render(t1, True, (FG))
-            t2BG = self.helpDescrFont.render(t2, True, (BG))
-            t2FG = self.helpDescrFont.render(t2, True, (FG))
-            t3BG = self.helpDescrFont.render(t3, True, (BG))
-            t3FG = self.helpDescrFont.render(t3, True, (FG))
-            t4BG = self.helpDescrFont.render(t4, True, (BG))
-            t4FG = self.helpDescrFont.render(t4, True, (FG))
-            t5BG = self.helpDescrFont.render(t5, True, (BG))
-            t5FG = self.helpDescrFont.render(t5, True, (FG))
-            t6BG = self.helpDescrFont.render(t6, True, (BG))
-            t6FG = self.helpDescrFont.render(t6, True, (FG))
-
-            t7BG = self.helpDescrFont.render(t7, True, (BG))
-            t7FG = self.helpDescrFont.render(t7, True, (FG))
-            t8BG = self.helpDescrFont.render(t8, True, (BG))
-            t8FG = self.helpDescrFont.render(t8, True, (FG))
-            t9BG = self.helpDescrFont.render(t9, True, (BG))
-            t9FG = self.helpDescrFont.render(t9, True, (FG))
-            t10BG = self.helpDescrFont.render(t10, True, (BG))
-            t10FG = self.helpDescrFont.render(t10, True, (FG))
-
-            #display to SCREEN
-            width = 40
-            height = 140
-            offset = 3
-            newLine = 35
-            self.SCREEN.blit(t1BG,(width,height))
-            self.SCREEN.blit(t1FG,(width-offset,height-offset))
-            self.SCREEN.blit(t2BG,(width,height+newLine))
-            self.SCREEN.blit(t2FG,(width-offset,(height+newLine)-offset))
-            self.SCREEN.blit(t3BG,(width,height+(newLine*2)))
-            self.SCREEN.blit(t3FG,(width-offset,(height+(newLine*2))-offset))
-            self.SCREEN.blit(t4BG,(width,height+(newLine*3)))
-            self.SCREEN.blit(t4FG,(width-offset,(height+(newLine*3))-offset))
-            self.SCREEN.blit(t5BG,(width,height+(newLine*4)))
-            self.SCREEN.blit(t5FG,(width-offset,(height+(newLine*4))-offset))
-            self.SCREEN.blit(t6BG,(width,height+(newLine*5)))
-            self.SCREEN.blit(t6FG,(width-offset,(height+(newLine*5))-offset))
-            self.SCREEN.blit(t7BG,(width,height+(newLine*6)))
-            self.SCREEN.blit(t7FG,(width-offset,(height+(newLine*6))-offset))
-            self.SCREEN.blit(t8BG,(width,height+(newLine*7)))
-            self.SCREEN.blit(t8FG,(width-offset,(height+(newLine*7))-offset))
-            self.SCREEN.blit(t9BG,(width,height+(newLine*8)))
-            self.SCREEN.blit(t9FG,(width-offset,(height+(newLine*8))-offset))
-            self.SCREEN.blit(t10BG,(width,height+(newLine*9)))
-            self.SCREEN.blit(t10FG,(width-offset,(height+(newLine*9))-offset))
-
-            self.SCREEN.blit(titleBG,(75-4,45-4))
-            self.SCREEN.blit(titleFG,(75,45))
-            self.SCREEN.blit(resumeGame,(90,515))
-            pygame.display.flip()
-
-            for event in pygame.event.get():
-                if((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
-                    return False
-                elif(event.type == MOUSEBUTTONUP):
-                    self.DisplayWhiteScreen()
-                    pygame.display.flip()
-                    return True
 
     # determine if the user clicked on a game image/icon
     def GetSelection(self, mouseX, mouseY):
+        ##################################################################
         # help image
         if((mouseY <= 60 and mouseY >= 33)and(mouseX <= 713 and mouseX >= 687)):
             return "help"
+        ##################################################################
+
         # row 1
         elif((mouseY <= 190) and (mouseY >= 80)):
             #print("ROW 1")
@@ -506,7 +577,3 @@ class GameBoard(object):
                 if(self.IsSelectedImage(17) == False):
                     return 17  # image 18
         return -1
-
-    # displays a blank white background image to the screen
-    def DisplayWhiteScreen(self):
-        self.SCREEN.fill((255,255,255,255))
