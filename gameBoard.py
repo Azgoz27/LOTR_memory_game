@@ -87,7 +87,7 @@ class GameBoard(object):
     # randomizes the game pieces (images) inside the list using "shuffle"
     def RandomizeGamePieces(self):
         random.shuffle(self.images)
-        random.shuffle(self.images)
+        #random.shuffle(self.images)
         for x in range(self.NUM_PAIRS):
             self.gamePieces.append(self.images[x])
 
@@ -170,10 +170,11 @@ class GameBoard(object):
     def DisplayGameBoard(self):
         # do this if we have at least 1 card selected
         if (self.NumPairs() >= 1):
-            #self.image_index = 4
             width = 80  ## print row 1
             for row1 in range(0, 6):
+
                 if(self.IsSelectedImage(row1)):
+
                     # print("TRUE = ",row1)
                     if (self.image_index <= self.number_images -1):
                         self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE),
@@ -186,11 +187,20 @@ class GameBoard(object):
                                          (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                           self.sprite_height))
 
+
+
+
+
+
+
                 else:
+                    image_index = 0
                     self.SCREEN.blit(self.gamePieces[row1], (width, self.ROW_ONE),
-                                     ( 0 * self.sprite_x, self.sprite_y, self.sprite_width,
+                                     (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                       self.sprite_height))
+
                 width += 100
+
 
             width = 80 ## print row 2
             #self.image_index = 4
@@ -209,8 +219,9 @@ class GameBoard(object):
                                           self.sprite_height))
 
                 else:
+                    image_index = 0
                     self.SCREEN.blit(self.gamePieces[row2], (width, self.ROW_TWO),
-                                     (0 * self.sprite_x, self.sprite_y, self.sprite_width,
+                                     (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                       self.sprite_height))
                 width += 100
 
@@ -231,18 +242,23 @@ class GameBoard(object):
                                           self.sprite_height))
 
                 else:
+                    image_index = 0
                     self.SCREEN.blit(self.gamePieces[row3], (width, self.ROW_THREE),
-                                     (0 * self.sprite_x, self.sprite_y, self.sprite_width,
+                                     (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                       self.sprite_height))
                 width += 100
 
         # NO MATCHES HAVE BEEN FOUND
         else:
+            self.image_index = 0
             width = 80 ## print row 1
+
             for row1 in range(0, 6):
                 self.SCREEN.blit(self.gamePieces[row1],(width,self.ROW_ONE),
                                  (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                   self.sprite_height))
+
+
                 width += 100
             width = 80 ## print row 2
             for row2 in range(6, 12):
@@ -494,4 +510,3 @@ class GameBoard(object):
     # displays a blank white background image to the screen
     def DisplayWhiteScreen(self):
         self.SCREEN.fill((255,255,255,255))
-# http://programmingnotes.freeweq.com/

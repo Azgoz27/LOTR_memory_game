@@ -71,7 +71,8 @@ class Music(object):
 
     # plays the "no pair" music
     def PlayNoPairSoundFX(self):
-        self.noPairSoundFX.play()
+        #self.noPairSoundFX.play()  iritantno
+        self.cardSoundFX.play()
 
     # plays the "win" music
     def PlayWinSoundFX(self):
