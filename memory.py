@@ -8,8 +8,6 @@ from gameMusic import *
 # These are default attributes that will be used for the program. They're
 # passed to the "gameBoard" class and can be changed in the future if so desired
 TITLE_CAPTION = "THE LORD OF THE RINGS - MEMORY GAME"
-WINDOW_WIDTH = 1440 # size of window's width in pixels
-WINDOW_HEIGHT = 900 # size of window's height in pixels
 NUM_PICS = 27 # total num of pics (game cards) which are in the "data/img" folder
 NUM_PAIRS = 9 # total num of possible matching pairs at any given time
 
@@ -28,7 +26,7 @@ def main():
 
     # pre initialize the screen size and game board
     os.environ["SDL_VIDEO_CENTERED"] = '1' # place screen in the middle of monitor
-    game_Board.InitializeScreenSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+    game_Board.InitializeScreenSize()
     game_Board.SetGameTitle(TITLE_CAPTION)
     game_Board.InitializeGameData(NUM_PICS)
     game_Board.RandomizeGamePieces()
@@ -39,6 +37,7 @@ def main():
     # this displays the initial START MENU to the screen
     while(not inGame):
         inGame = game_Board.DisplayStartScreen()
+        #inGame = game_Board.setup_menu()
         clock.wait(70) # do this so the CPU doesnt work too hard
 
     # stop the intro music
@@ -140,7 +139,7 @@ def main():
             #print("NUMBER OF GUESSES = ",numGuesses/2)
             game_Board.DisplayGameBoard()
             pygame.display.update()
-            clock.wait(2500)
+            clock.wait(2000)
             game_Music.StopInGame()
             game_Music.PlayWinSoundFX()
             game_Music.PlayGameOver()
