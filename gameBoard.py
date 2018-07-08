@@ -17,6 +17,8 @@ class GameBoard(object):
         self.NUM_CARDS = 18
         self.NUM_PAIRS = 9
         self.NUM_RANKS = 4
+        self.number_of_column = "6"
+        self.number_of_row = "3"
         self.images = []
         self.gamePieces = []
         #self.cardCover = []
@@ -74,11 +76,11 @@ class GameBoard(object):
         # load fonts into the game
         self.titleFont = pygame.font.Font(os.path.join("data/fnt/","anirb.ttf"),50)
         self.proceed = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),35)
-        self.input_font = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),14)
+        self.input_font = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),30)
 
        #################################################################################
         self.helpButton = pygame.image.load(os.path.join("data/img/", "restart.png"))  ###
-        self.start_button = pygame.image.load(os.path.join("data/img/","start.png"))
+        #self.start_button = pygame.image.load(os.path.join("data/img/","start.png"))
         self.rank_button = pygame.image.load(os.path.join("data/img/", "rank.png"))
 
         self.helpFont = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),14)####
@@ -145,34 +147,36 @@ class GameBoard(object):
         return False
 
 
-     #setup menu
+     #setup menu_1
     def setup_menu(self):
         inGame = False
 
-        input_width_1 = 100
-        input_height_1 = 100
-        input_width_2 = 200
-        input_height_2 = 200
-        input_width_3 = 300
-        input_height_3 = 300
+        input_width_1 = 300
+        input_height_1 = 250
+        input_width_2 = 425
+        input_height_2 = 400
+        input_width_3 = 450
+        input_height_3 = 475
 
         while (not inGame):
 
             # black font
-            input_bg_1 = self.input_font.render("Please enter the number of columns: ", True, (0, 0, 0))
-            input_bg_2 = self.input_font.render("Please enter the number of rows: ", True, (0, 0, 0))
-            input_bg_3 = self.input_font.render("Please enter the number of Players: ", True, (0, 0, 0))
+            input_bg_1 = self.input_font.render("Please enter the number of columns and press <enter>",
+                                                True, (0, 0, 0))
+            input_bg_2 = self.input_font.render("Number of columns must be even or ", True, (0, 0, 0))
+            input_bg_3 = self.input_font.render("leave blank for a default value(6) ", True, (0, 0, 0))
 
             # yellow font
-            input_fg_1 = self.input_font.render("Please enter the number of columns: ", True, (255, 215, 0))
-            input_fg_2 = self.input_font.render("Please enter the number of rows: ", True, (255, 215, 0))
-            input_fg_3 = self.input_font.render("Please enter the number of players: ", True, (255, 215, 0))
+            input_fg_1 = self.input_font.render("Please enter the number of columns and press <enter>",
+                                                True, (255, 215, 0))
+            input_fg_2 = self.input_font.render("Number of columns must be even or ", True, (255, 215, 0))
+            input_fg_3 = self.input_font.render("leave blank for a default value(6) ", True, (255, 215, 0))
 
-            self.SCREEN.blit(self.table, (0,0))
-            self.SCREEN.blit(self.start_button, (500,500))
-            self.SCREEN.blit(input_bg_1, (input_width_1 - 4, input_height_1 - 4))
-            self.SCREEN.blit(input_bg_2, (input_width_2 - 4, input_height_2 - 4))
-            self.SCREEN.blit(input_bg_3, (input_width_3 - 4, input_height_3 - 4))
+            self.SCREEN.blit(self.background_Image, (0, 0))
+            self.SCREEN.blit(self.table, (250,150))
+            self.SCREEN.blit(input_bg_1, (input_width_1 - 2, input_height_1 - 2))
+            self.SCREEN.blit(input_bg_2, (input_width_2 - 2, input_height_2 - 2))
+            self.SCREEN.blit(input_bg_3, (input_width_3 - 2, input_height_3 - 2))
             self.SCREEN.blit(input_fg_1, (input_width_1, input_height_1))
             self.SCREEN.blit(input_fg_2, (input_width_2, input_height_2))
             self.SCREEN.blit(input_fg_3, (input_width_3, input_height_3))
@@ -181,10 +185,25 @@ class GameBoard(object):
                 if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
                     pygame.quit()
                     sys.exit()
-                elif (event.type == MOUSEBUTTONUP):
-                    pygame.display.flip()
-                    return True
+                elif event.type == KEYDOWN:
+                    if event.unicode.isdigit():
+                        self.number_of_column += event.unicode
+                    elif event.key == K_BACKSPACE:
+                        self.number_of_column = self.number_of_column[:-1]
+                    elif event.key == K_RETURN:
+                        self.number_of_column = ""
+                        return True
+            user_input = self.input_font.render(self.number_of_column, True, (255, 215, 0))
+            rect = user_input.get_rect(center = (700,600))
+            self.SCREEN.blit(user_input,rect)
             pygame.display.flip()
+
+
+
+
+
+
+
 
 
         ###################################################################
