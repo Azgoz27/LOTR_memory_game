@@ -17,8 +17,9 @@ class GameBoard(object):
         self.NUM_CARDS = 18
         self.NUM_PAIRS = 9
         self.NUM_RANKS = 4
-        self.number_of_column = "6"
-        self.number_of_row = "3"
+        self.number_of_columns = "6"
+        self.number_of_rows = "3"
+        self.number_of_players = "1"
         self.images = []
         self.gamePieces = []
         #self.cardCover = []
@@ -140,7 +141,7 @@ class GameBoard(object):
                 pygame.quit()
                 sys.exit()
             elif(event.type == MOUSEBUTTONUP):
-                self.setup_menu()
+                self.setup_menu_1()
                 pygame.display.flip()
                 return True
         pygame.display.flip()
@@ -148,7 +149,7 @@ class GameBoard(object):
 
 
      #setup menu_1
-    def setup_menu(self):
+    def setup_menu_1(self):
         inGame = False
 
         input_width_1 = 300
@@ -187,22 +188,120 @@ class GameBoard(object):
                     sys.exit()
                 elif event.type == KEYDOWN:
                     if event.unicode.isdigit():
-                        self.number_of_column += event.unicode
+                        self.number_of_columns += event.unicode
                     elif event.key == K_BACKSPACE:
-                        self.number_of_column = self.number_of_column[:-1]
+                        self.number_of_columns = self.number_of_columns[:-1]
                     elif event.key == K_RETURN:
-                        self.number_of_column = ""
+                        self.number_of_columns = ""
+                        self.setup_menu_2()
                         return True
-            user_input = self.input_font.render(self.number_of_column, True, (255, 215, 0))
+            user_input = self.input_font.render(self.number_of_columns, True, (255, 215, 0))
             rect = user_input.get_rect(center = (700,600))
             self.SCREEN.blit(user_input,rect)
             pygame.display.flip()
 
+    def setup_menu_2(self):
+        inGame = False
+
+        input_width_1 = 300
+        input_height_1 = 250
+        input_width_2 = 425
+        input_height_2 = 400
+        input_width_3 = 450
+        input_height_3 = 475
+
+        while (not inGame):
+
+            # black font
+            input_bg_1 = self.input_font.render("Please enter the number of rows and press <enter>",
+                                                True, (0, 0, 0))
+            input_bg_2 = self.input_font.render("Number of columns must be even or ", True, (0, 0, 0))
+            input_bg_3 = self.input_font.render("leave blank for a default value(3) ", True, (0, 0, 0))
+
+            # yellow font
+            input_fg_1 = self.input_font.render("Please enter the number of rows and press <enter>",
+                                                True, (255, 215, 0))
+            input_fg_2 = self.input_font.render("Number of columns must be even or ", True, (255, 215, 0))
+            input_fg_3 = self.input_font.render("leave blank for a default value(3) ", True, (255, 215, 0))
+
+            self.SCREEN.blit(self.background_Image, (0, 0))
+            self.SCREEN.blit(self.table, (250, 150))
+            self.SCREEN.blit(input_bg_1, (input_width_1 - 2, input_height_1 - 2))
+            self.SCREEN.blit(input_bg_2, (input_width_2 - 2, input_height_2 - 2))
+            self.SCREEN.blit(input_bg_3, (input_width_3 - 2, input_height_3 - 2))
+            self.SCREEN.blit(input_fg_1, (input_width_1, input_height_1))
+            self.SCREEN.blit(input_fg_2, (input_width_2, input_height_2))
+            self.SCREEN.blit(input_fg_3, (input_width_3, input_height_3))
+
+            for event in pygame.event.get():
+                if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == KEYDOWN:
+                    if event.unicode.isdigit():
+                        self.number_of_rows += event.unicode
+                    elif event.key == K_BACKSPACE:
+                        self.number_of_rows = self.number_of_rows[:-1]
+                    elif event.key == K_RETURN:
+                        self.number_of_rows = ""
+                        self.setup_menu_3()
+                        return True
+            user_input = self.input_font.render(self.number_of_rows, True, (255, 215, 0))
+            rect = user_input.get_rect(center=(700, 600))
+            self.SCREEN.blit(user_input, rect)
+            pygame.display.flip()
 
 
 
+    def setup_menu_3(self):
+        inGame = False
 
+        input_width_1 = 300
+        input_height_1 = 250
+        input_width_2 = 425
+        input_height_2 = 400
+        input_width_3 = 450
+        input_height_3 = 475
 
+        while (not inGame):
+
+            # black font
+            input_bg_1 = self.input_font.render("Please enter the number of players and press <enter>",
+                                                True, (0, 0, 0))
+            #input_bg_2 = self.input_font.render("Number of columns must be even or ", True, (0, 0, 0))
+            input_bg_3 = self.input_font.render("leave blank for a default value(1) ", True, (0, 0, 0))
+
+            # yellow font
+            input_fg_1 = self.input_font.render("Please enter the number of players and press <enter>",
+                                                True, (255, 215, 0))
+            #input_fg_2 = self.input_font.render("Number of columns must be even or ", True, (255, 215, 0))
+            input_fg_3 = self.input_font.render("leave blank for a default value(1) ", True, (255, 215, 0))
+
+            self.SCREEN.blit(self.background_Image, (0, 0))
+            self.SCREEN.blit(self.table, (250, 150))
+            self.SCREEN.blit(input_bg_1, (input_width_1 - 2, input_height_1 - 2))
+            #self.SCREEN.blit(input_bg_2, (input_width_2 - 2, input_height_2 - 2))
+            self.SCREEN.blit(input_bg_3, (input_width_3 - 2, input_height_3 - 2))
+            self.SCREEN.blit(input_fg_1, (input_width_1, input_height_1))
+            #self.SCREEN.blit(input_fg_2, (input_width_2, input_height_2))
+            self.SCREEN.blit(input_fg_3, (input_width_3, input_height_3))
+
+            for event in pygame.event.get():
+                if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == KEYDOWN:
+                    if event.unicode.isdigit():
+                        self.number_of_players += event.unicode
+                    elif event.key == K_BACKSPACE:
+                        self.number_of_players = self.number_of_players[:-1]
+                    elif event.key == K_RETURN:
+                        self.number_of_players = ""
+                        return True
+            user_input = self.input_font.render(self.number_of_players, True, (255, 215, 0))
+            rect = user_input.get_rect(center=(700, 600))
+            self.SCREEN.blit(user_input, rect)
+            pygame.display.flip()
 
 
 

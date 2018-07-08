@@ -110,7 +110,7 @@ def main():
                         game_Music.PauseInGame()
                         game_Music.PlayHelp()
                         #inGame = game_Board.DisplayHelp()
-                        inGame = game_Board.setup_menu()
+                        inGame = game_Board.setup_menu_1()
                         game_Music.StopHelp()
                         game_Music.ResumeInGame()
 
