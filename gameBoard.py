@@ -1,4 +1,4 @@
-import random, pygame, sys, os, re
+import random, pygame, sys, os
 from pygame.locals import *
 
 # game board class declaration
@@ -20,12 +20,12 @@ class GameBoard(object):
         self.NUM_PAIRS = 9
         self.NUM_RANKS = 4
         self.images = []
-        self.icons = []
+        self.gamePieces = []
         self.table_top = 100
         self.table_left = 250
 
-        self.number_of_columns = 8
-        self.number_of_rows = 4
+        self.number_of_columns = 6
+        self.number_of_rows = 3
         self.number_of_players = 1
         self.board = []
         self.pairs = []
@@ -55,59 +55,69 @@ class GameBoard(object):
         self.mousey = 0
         self.FPS = 30
 
-
-    # initializes the screen size of the window
+        # initializes the screen size of the window
     def InitializeScreenSize(self):
-        self.SCREEN = pygame.display.set_mode((self.WINDOW_WIDTH,self.WINDOW_HEIGHT))
+        self.SCREEN = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
 
-
-    # sets the game title
+        # sets the game title
     def SetGameTitle(self):
         pygame.display.set_caption(self.TITLE_CAPTION)
 
-
     # gets data (img files) from the folder and stores them into various lists
-    def InitializeGameData(self):
-       # stores the playing cards (images)
+    def InitializeGameData(self, totalPics):
+        self.NUM_PICS = totalPics
+
+        # stores the playing cards (images)
         for x in range(self.NUM_PICS):
             self.images.append(pygame.image.load(os.path.join("data/img/",
-                "img%d.png" % (x+1))).convert_alpha())
+                                                              "img%d.png" % (x + 1))).convert_alpha())
 
         ##########################################################################
         # stores the rank images
         for x in range(self.NUM_RANKS):
-            #self.ranks.append(pygame.image.load(os.path.join("data/img/",
+            # self.ranks.append(pygame.image.load(os.path.join("data/img/",
             #    "rank%d.png" % (x+1))))
-            self.ranks.append(pygame.image.load(os.path.join("data/img/","rank.png")))
+            self.ranks.append(pygame.image.load(os.path.join("data/img/", "rank.png")))
         ##########################################################################
 
-        #load background images
+        # load background images
         self.table = (pygame.image.load(os.path.join("data/img/", "table.png")))
         self.background_Image = pygame.image.load(os.path.join("data/img/", "back.png"))
 
         # load fonts into the game
-        self.titleFont = pygame.font.Font(os.path.join("data/fnt/","anirb.ttf"),50)
-        self.proceed = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),35)
-        self.input_font = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),30)
+        self.titleFont = pygame.font.Font(os.path.join("data/fnt/", "anirb.ttf"), 50)
+        self.proceed = pygame.font.Font(os.path.join("data/fnt/", "ring.ttf"), 35)
+        self.input_font = pygame.font.Font(os.path.join("data/fnt/", "ring.ttf"), 30)
 
-       #################################################################################
+        #################################################################################
         self.helpButton = pygame.image.load(os.path.join("data/img/", "restart.png"))  ###
-        #self.start_button = pygame.image.load(os.path.join("data/img/","start.png"))
+        # self.start_button = pygame.image.load(os.path.join("data/img/","start.png"))
         self.rank_button = pygame.image.load(os.path.join("data/img/", "rank.png"))
 
-        self.helpFont = pygame.font.Font(os.path.join("data/fnt/","ring.ttf"),14)####
-        self.helpDescrFont = pygame.font.Font(os.path.join("data/fnt/","anirm.ttf"),30)###
-        self.currentScoreFont = pygame.font.Font(os.path.join("data/fnt/","anirm.ttf"),30)###
-        #################################################################################
+        self.helpFont = pygame.font.Font(os.path.join("data/fnt/", "ring.ttf"), 14)  ####
+        self.helpDescrFont = pygame.font.Font(os.path.join("data/fnt/", "anirm.ttf"), 30)  ###
+        self.currentScoreFont = pygame.font.Font(os.path.join("data/fnt/", "anirm.ttf"), 30)  ###
+        ################################################################################
 
+    # after a game is over re initialize the game board and cards
+    def ReInitializeBoard(self):
+        del self.pairs[:]
+        del self.gamePieces[:]
+        self.RandomizeGamePieces()
 
     # randomizes the game pieces (images) inside the list using "shuffle"
     def RandomizeGamePieces(self):
         random.shuffle(self.images)
-        self.NUM_PAIRS = int(int(self.number_of_columns) * int(self.number_of_rows) / 2)   ####broj parova koji trebam
-        self.icons = self.images[:self.NUM_PAIRS] * 2
-        random.shuffle(self.icons)
+        random.shuffle(self.images)
+        for x in range(self.NUM_PAIRS):
+            self.gamePieces.append(self.images[x])
 
+        random.shuffle(self.gamePieces)
+
+        for x in range(self.NUM_PAIRS, self.NUM_CARDS):
+            self.gamePieces.append(self.gamePieces[x-self.NUM_PAIRS])
+
+        random.shuffle(self.gamePieces)
 
     # before the game starts, this initializes the start Menu
     def DisplayStartScreen(self):
@@ -116,42 +126,41 @@ class GameBoard(object):
         title_width_2 = 350
         title_height_2 = 400
 
-        #black font
+        # black font
         titleBG1 = self.titleFont.render(self.GAME_TITLE1, True, (0, 0, 0))
         titleBG2 = self.titleFont.render(self.GAME_TITLE2, True, (0, 0, 0))
         proceed1 = self.proceed.render("Click Anywhere To Start!", True, (0, 0, 0))
-        author1 = self.proceed.render("Created by Tomislav S", True,(0, 0, 0))
+        author1 = self.proceed.render("Created by Tomislav S", True, (0, 0, 0))
 
-        #yellow font
+        # yellow font
         titleFG1 = self.titleFont.render(self.GAME_TITLE1, True, (255, 215, 0))
         titleFG2 = self.titleFont.render(self.GAME_TITLE2, True, (255, 215, 0))
         proceed2 = self.proceed.render("Click Anywhere To Start!", True, (255, 215, 0))
-        author2 = self.proceed.render("Created by Tomislav S", True,(255, 215, 0))
+        author2 = self.proceed.render("Created by Tomislav S", True, (255, 215, 0))
 
-        #display to SCREEN
-        self.SCREEN.blit(self.background_Image,(0, 0))
-        self.SCREEN.blit(titleBG1,(title_width_1 - 4,title_height_1 - 4))
+        # display to SCREEN
+        self.SCREEN.blit(self.background_Image, (0, 0))
+        self.SCREEN.blit(titleBG1, (title_width_1 - 4, title_height_1 - 4))
         self.SCREEN.blit(titleBG2, (title_width_2 - 4, title_height_2 - 4))
-        self.SCREEN.blit(titleFG1,(title_width_1,title_height_1))
+        self.SCREEN.blit(titleFG1, (title_width_1, title_height_1))
         self.SCREEN.blit(titleFG2, (title_width_2, title_height_2))
-        self.SCREEN.blit(proceed1,(title_width_1 + 300,title_height_1 + 440))
-        self.SCREEN.blit(proceed2,(title_width_1 + 303, title_height_1 + 442))
-        self.SCREEN.blit(author1,(title_width_1 + -200, title_height_1 + 590))
-        self.SCREEN.blit(author2,(title_width_1 + -197, title_height_1 + 592))
+        self.SCREEN.blit(proceed1, (title_width_1 + 300, title_height_1 + 440))
+        self.SCREEN.blit(proceed2, (title_width_1 + 303, title_height_1 + 442))
+        self.SCREEN.blit(author1, (title_width_1 + -200, title_height_1 + 590))
+        self.SCREEN.blit(author2, (title_width_1 + -197, title_height_1 + 592))
 
         for event in pygame.event.get():
-            if((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
+            if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
                 pygame.quit()
                 sys.exit()
-            elif(event.type == MOUSEBUTTONUP):
+            elif (event.type == MOUSEBUTTONUP):
                 self.setup_menu_1()
                 pygame.display.flip()
                 return True
         pygame.display.flip()
         return False
 
-
-     #setup menu_1
+    # setup menu_1
     def setup_menu_1(self):
         inGame = False
 
@@ -177,7 +186,7 @@ class GameBoard(object):
             input_fg_3 = self.input_font.render("leave blank for a default value(6) ", True, (255, 215, 0))
 
             self.SCREEN.blit(self.background_Image, (0, 0))
-            self.SCREEN.blit(self.table, (250,150))
+            self.SCREEN.blit(self.table, (250, 150))
             self.SCREEN.blit(input_bg_1, (input_width_1 - 2, input_height_1 - 2))
             self.SCREEN.blit(input_bg_2, (input_width_2 - 2, input_height_2 - 2))
             self.SCREEN.blit(input_bg_3, (input_width_3 - 2, input_height_3 - 2))
@@ -190,25 +199,22 @@ class GameBoard(object):
                     pygame.quit()
                     sys.exit()
                 elif event.type == KEYDOWN:
-                    #if event.key == K_BACKSPACE:
+                    # if event.key == K_BACKSPACE:
                     #    input_1 = input_1[:-1]
-                    #elif event.unicode.isdigit():
+                    # elif event.unicode.isdigit():
                     #    input_1 += event.unicode
                     if event.key == K_RETURN:
-                        #input_1 = []
-                        #input_1 = int(input_1[0])
-                        #print(type(input_1))
-                        #print(input_1)
+                        # input_1 = []
+                        # input_1 = int(input_1[0])
+                        # print(type(input_1))
+                        # print(input_1)
                         self.setup_menu_2()
                         return True
             user_input = self.input_font.render(input_1, True, (255, 215, 0))
-            rect = user_input.get_rect(center = (700,600))
-            self.SCREEN.blit(user_input,rect)
-
-
+            rect = user_input.get_rect(center=(700, 600))
+            self.SCREEN.blit(user_input, rect)
 
             pygame.display.flip()
-
 
     def setup_menu_2(self):
         inGame = False
@@ -247,19 +253,18 @@ class GameBoard(object):
                     pygame.quit()
                     sys.exit()
                 elif event.type == KEYDOWN:
-                    #if event.unicode.isdigit():
+                    # if event.unicode.isdigit():
                     #    self.number_of_rows += event.unicode
-                    #elif event.key == K_BACKSPACE:
+                    # elif event.key == K_BACKSPACE:
                     #    self.number_of_rows = self.number_of_rows[:-1]
                     if event.key == K_RETURN:
-                    #    self.number_of_rows = ""
+                        #    self.number_of_rows = ""
                         self.setup_menu_3()
                         return True
-            #user_input = self.input_font.render(self.number_of_rows, True, (255, 215, 0))
-            #rect = user_input.get_rect(center=(700, 600))
-            #self.SCREEN.blit(user_input, rect)
+            # user_input = self.input_font.render(self.number_of_rows, True, (255, 215, 0))
+            # rect = user_input.get_rect(center=(700, 600))
+            # self.SCREEN.blit(user_input, rect)
             pygame.display.flip()
-
 
     def setup_menu_3(self):
         inGame = False
@@ -275,22 +280,22 @@ class GameBoard(object):
             # black font
             input_bg_1 = self.input_font.render("Please enter the number of players and press <enter>",
                                                 True, (0, 0, 0))
-            #input_bg_2 = self.input_font.render("Number of columns must be even or ", True, (0, 0, 0))
+            # input_bg_2 = self.input_font.render("Number of columns must be even or ", True, (0, 0, 0))
             input_bg_3 = self.input_font.render("leave blank for a default value(1) ", True, (0, 0, 0))
 
             # yellow font
             input_fg_1 = self.input_font.render("Please enter the number of players and press <enter>",
                                                 True, (255, 215, 0))
-            #input_fg_2 = self.input_font.render("Number of columns must be even or ", True, (255, 215, 0))
+            # input_fg_2 = self.input_font.render("Number of columns must be even or ", True, (255, 215, 0))
             input_fg_3 = self.input_font.render("leave blank for a default value(1) ", True, (255, 215, 0))
 
             self.SCREEN.blit(self.background_Image, (0, 0))
             self.SCREEN.blit(self.table, (250, 150))
             self.SCREEN.blit(input_bg_1, (input_width_1 - 2, input_height_1 - 2))
-            #self.SCREEN.blit(input_bg_2, (input_width_2 - 2, input_height_2 - 2))
+            # self.SCREEN.blit(input_bg_2, (input_width_2 - 2, input_height_2 - 2))
             self.SCREEN.blit(input_bg_3, (input_width_3 - 2, input_height_3 - 2))
             self.SCREEN.blit(input_fg_1, (input_width_1, input_height_1))
-            #self.SCREEN.blit(input_fg_2, (input_width_2, input_height_2))
+            # self.SCREEN.blit(input_fg_2, (input_width_2, input_height_2))
             self.SCREEN.blit(input_fg_3, (input_width_3, input_height_3))
 
             for event in pygame.event.get():
@@ -299,159 +304,122 @@ class GameBoard(object):
                     sys.exit()
                 elif event.type == KEYDOWN:
                 #    if event.unicode.isdigit():
-                #        self.number_of_players += event.unicode
+            #        self.number_of_players += event.unicode
                 #    elif event.key == K_BACKSPACE:
-                #        self.number_of_players = self.number_of_players[:-1]
+            #        self.number_of_players = self.number_of_players[:-1]
                     if event.key == K_RETURN:
-                    #    self.number_of_players = ""
+                        #    self.number_of_players = ""
                         return True
-            #user_input = self.input_font.render(self.number_of_players, True, (255, 215, 0))
-            #rect = user_input.get_rect(center=(700, 600))
-            #self.SCREEN.blit(user_input, rect)
+            # user_input = self.input_font.render(self.number_of_players, True, (255, 215, 0))
+            # rect = user_input.get_rect(center=(700, 600))
+            # self.SCREEN.blit(user_input, rect)
             pygame.display.flip()
 
-        ###################################################################
-        # self.col_number = input("Please enter the number of columns: ")
-        # if self.col_number % 2 != 0:
-        #    self.col_number -= 1
-        # self.row_number = input("Please enter the number or rows: ")
-        # if self.row_number % 2 != 0:
-        #    self.row_number -= 1
-        ###################################################################
-
-        #return self.col_number, self.row_number
-
-
     # displays the main background image (the table and the help button)
-    def DisplayIngameBackground(self,numGuesses,numPairs):
+    def DisplayIngameBackground(self, numGuesses, numPairs):
         self.SCREEN.blit(self.background_Image, (0, 0))
         self.SCREEN.blit(self.table, (250, 150))
 
-        self.SCREEN.blit(self.helpButton,(1350,50))
+        self.SCREEN.blit(self.helpButton, (1350, 50))
         displayScore = self.currentScoreFont.render("Number of Guesses: %d" %
-            int(numGuesses/2), True, (255,255,255))
+                                                    int(numGuesses / 2), True, (255, 255, 255))
         pairs = self.currentScoreFont.render("Number of Pairs: (%d / %d)" %
-            (numPairs, self.NUM_PAIRS), True, (255,255,255))
-        self.SCREEN.blit(displayScore,(800,800))
-        self.SCREEN.blit(pairs,(50,800))
+                                                 (numPairs, self.NUM_PAIRS), True, (255, 255, 255))
+        self.SCREEN.blit(displayScore, (800, 800))
+        self.SCREEN.blit(pairs, (50, 800))
 
-
-        # returns the number of "pairs" that have been found
+    # returns the number of "pairs" that have been found
     def NumPairs(self):
         return len(self.pairs)
 
-        # determines of two cards are a pairing match
-    def IsPair(self, SELECTION_ONE, SELECTION_TWO):
-        return (self.icons[SELECTION_ONE] == self.icons[SELECTION_TWO])
-
-        # removes the previous selection from the list
+    # removes the previous selection from the list
     def RemoveSelection(self):
         self.pairs.pop()
-
-
-    def DisplayGameBoard(self):
-        XMARGIN = int((self.TABLE_WIDTH - (self.number_of_columns * (self.sprite_width + self.sprite_gap))) / 2)
-        YMARGIN = int((self.TABLE_HEIGHT - (self.number_of_rows * (self.sprite_height + self.sprite_gap))) / 2)
-        if (self.NumPairs() >= 1):
-            for boxx in range(self.number_of_columns):
-                for boxy in range(self.number_of_rows):
-                    if self.IsSelectedImage():
-                        # self.left, self.top  = leftTopCoordsOfBox(boxx, boxy)
-                        self.left = boxx * (self.sprite_width + self.sprite_gap) + XMARGIN
-                        self.top = boxy * (self.sprite_height + self.sprite_gap) + YMARGIN
-                        print(self.icons)
-                        self.SCREEN.blit(self.icons[0], (self.left + self.table_left, self.top + self.table_top),
-                                        (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                        self.sprite_height))
-                        #del self.icons[0]
-        else:
-            for boxx in range(self.number_of_columns):
-                for boxy in range(self.number_of_rows):
-                    # self.left, self.top  = leftTopCoordsOfBox(boxx, boxy)
-                    self.left = boxx * (self.sprite_width + self.sprite_gap) + XMARGIN
-                    self.top = boxy * (self.sprite_height + self.sprite_gap) + YMARGIN
-                    print(self.icons)
-                    self.SCREEN.blit(self.icons[0], (self.left + self.table_left, self.top + self.table_top),
-                                    (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                    self.sprite_height))
-                    #del self.icons[0]
-
-
-
-    # determines if a specific card has been selected within our list
-    # return true if current selection is in our list, else false
-    def IsSelectedImage(self, checkMatch):
-        for item in self.pairs:
-            if (int(checkMatch) == int(item)):
-                return True
-        return False
-
-    #def GetSelection(self, mouseX, mouseY):
-    def getBoxAtPixel(self, mouseX, mouseY):
-        XMARGIN = int((self.TABLE_WIDTH - (self.number_of_columns * (self.sprite_width + self.sprite_gap))) / 2)
-        YMARGIN = int((self.TABLE_HEIGHT - (self.number_of_rows * (self.sprite_height + self.sprite_gap))) / 2)
-        for boxx in range(self.number_of_columns):
-            for boxy in range(self.number_of_rows):
-                # self.left, self.top  = leftTopCoordsOfBox(boxx, boxy)
-                self.left = boxx * (self.sprite_width + self.sprite_gap) + XMARGIN
-                self.top = boxy * (self.sprite_height + self.sprite_gap) + YMARGIN
-                boxRect = pygame.Rect((self.left + self.table_left), (self.top + self.table_top), self.sprite_width, self.sprite_height)
-                if boxRect.collidepoint(mouseX, mouseY):
-                    return (boxx, boxy)
-        return (None, None)
-
-
-    def drawHighlightBox(self, boxx, boxy):
-        XMARGIN = int((self.TABLE_WIDTH - (self.number_of_columns * (self.sprite_width + self.sprite_gap))) / 2)
-        YMARGIN = int((self.TABLE_HEIGHT - (self.number_of_rows * (self.sprite_height + self.sprite_gap))) / 2)
-        self.left = boxx * (self.sprite_width + self.sprite_gap) + XMARGIN
-        self.top = boxy * (self.sprite_height + self.sprite_gap) + YMARGIN
-        pygame.draw.rect(self.SCREEN, (255, 215, 0),
-                         (self.left - 5, self.top - 5, self.sprite_width + 10, self.sprite_height + 10), 4)
-
-
-    def revealBoxesAnimation(self):
-        # Do the "box reveal" animation.
-        if (self.image_index <= self.number_images - 1):
-            self.SCREEN.blit(self.top, self.left),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width, self.sprite_height)
-            self.image_index += 1
-            pygame.time.Clock().tick(self.FPS)
-        else:
-            self.image_index -= 1
-            self.SCREEN.blit(self.top, self.left), (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                              self.sprite_height)
-
-
-    def coverBoxesAnimation(self):
-        # Do the "box cover" animation.
-        if (self.image_index != 0):
-            self.SCREEN.blit(self.top, self.left),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width, self.sprite_height)
-            self.image_index -= 1
-            pygame.time.Clock().tick(self.FPS)
-
-    def hasWon(self, revealedBoxes):
-        # Returns True if all the boxes have been revealed, otherwise False
-        for i in self.revealedBoxes:
-            if False in i:
-                return False  # return False if any boxes are covered.
-        return True
-
-    def generateRevealedBoxesData(self, val):
-
-        for i in range(self.table_width):
-            self.revealedBoxes.append([val] * self.table_height)
-        return self.revealedBoxes
-
-
-
 
     # adds matching pairs of cards to the list
     def AppendSelection(self, userSelection):
         self.pairs.append(userSelection)
 
+    # determines of two cards are a pairing match
+    #def IsPair(self, SELECTION_ONE, SELECTION_TWO):
+    #    return (self.gamePieces[SELECTION_ONE] == self.gamePieces[SELECTION_TWO])
 
+    # displays the current game board to the screen
+    def DisplayGameBoard(self):
+        # do this if we have at least 1 card selected
+        if (self.NumPairs() >= 1):
+            width = 80  ## print row 1
+            for row1 in range(0, 6):
+                if(self.IsSelectedImage(row1)):
+                    # print("TRUE = ",row1)
+                    if (self.image_index <= self.number_images - 1):
+                        self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE), (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                        self.image_index += 1
+                        self.clock.wait(50)
+                    else:
+                        self.image_index -= 1
+                        #print("FALSE = ",row1)
+                        self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                width += 100
 
+            width = 80 ## print row 2
+            for row2 in range(6, 12):
+                if(self.IsSelectedImage(row2)):
+                    if (self.image_index <= self.number_images - 1):
+                        self.SCREEN.blit(self.gamePieces[row2],(width, self.ROW_ONE), (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                        self.image_index += 1
+                    else:
+                        self.image_index -= 1
+                        #print("FALSE = ",row1)
+                        self.SCREEN.blit(self.gamePieces[row2],(width, self.ROW_ONE),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                width += 100
 
+            width = 80 ## print row 3
+            for row3 in range(12, 18):
+                if(self.IsSelectedImage(row3)):
+                    if (self.image_index <= self.number_images - 1):
+                        self.SCREEN.blit(self.gamePieces[row3],(width, self.ROW_ONE), (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                        self.image_index += 1
+                    else:
+                        self.image_index -= 1
+                        #print("FALSE = ",row1)
+                        self.SCREEN.blit(self.gamePieces[row3],(width, self.ROW_ONE),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                width += 100
+
+        # NO MATCHES HAVE BEEN FOUND
+        else:
+            image_index = 0
+            width = 80 ## print row 1
+            for row1 in range(0, 6):
+                self.SCREEN.blit(self.gamePieces[row1],(width,self.ROW_ONE),(image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                width += 100
+            width = 80 ## print row 2
+
+            for row2 in range(6, 12):
+                self.SCREEN.blit(self.gamePieces[row2],(width,self.ROW_TWO),(image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                width += 100
+
+            width = 80 ## print row 3
+            for row3 in range(12, 18):
+                self.SCREEN.blit(self.gamePieces[row3],(width,self.ROW_THREE), (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                         self.sprite_height))
+                width += 100
+
+    # determines if a specific card has been selected within our list
+    # return true if current selection is in our list, else false
+    def IsSelectedImage(self, checkMatch):
+        for item in self.pairs:
+            if(int(checkMatch) == int(item)):
+                return True
+        return False
 
     # display the game over Menu to the screen
     def GameOver(self,numGuesses):
@@ -466,7 +434,7 @@ class GameBoard(object):
         self.SCREEN.blit(self.background_Image,(0,0))
         displayScore = self.currentScoreFont.render("Number of Guesses: %d" %
             (numGuesses), True, (255,255,255))
-        resumeGame = self.proceed.render("Click Anywhere To Continue!",
+        resumeGame = self.directionsFont.render("Click Anywhere To Continue!",
             True, (255,255,255))
 
         # display the game over ranks
@@ -518,133 +486,101 @@ class GameBoard(object):
                 elif(event.type == MOUSEBUTTONUP):
                     return True
 
+    # display the help menu to the screen
+    def DisplayHelp(self):
+        inGame = False
+        titleHeight = 100
+        titleWidth = 150
+        t1 = "Kenneth's Memory Game is a mind stimulating educational"
+        t2 = "card game in which an assortment of cards are laid face "
+        t3 = "down on a surface, and the player tries to uncover two"
+        t4 = "identical pairs. If the two cards match, they are"
+        t5 = "removed from gameplay. If they do not match, the cards"
+        t6 = "are turned back over. The object of the game is to find"
+        t7 = "pairs of two matching cards in the fewest number of"
+        t8 = "turns possible. This game can be played alone or with"
+        t9 = "multiple players, and is especially challenging for children"
+        t10 = "and adults alike."
+        screenTitle = "About"
 
+        self.SCREEN.blit(self.background_Image,(0,0))
 
-    # after a game is over re-initialize the game board and cards
-    def ReInitializeBoard(self):
-        del self.pairs[:]
-        del self.gamePieces[:]
-        self.RandomizeGamePieces()
+        while(not inGame):
+            self.clock.wait(70)
+            #directions
+            #black
+            titleBG = self.titleFont.render(screenTitle, True, (0,0,0))
+            #yellow
+            titleFG = self.titleFont.render(screenTitle, True, (225,225,0))
+            resumeGame = self.directionsFont.render("Click Anywhere To Continue!", True, (255,255,255))
+            BG = (0,0,0)
+            FG = (255,255,0)
+            t1BG = self.helpDescrFont.render(t1, True, (BG))
+            t1FG = self.helpDescrFont.render(t1, True, (FG))
+            t2BG = self.helpDescrFont.render(t2, True, (BG))
+            t2FG = self.helpDescrFont.render(t2, True, (FG))
+            t3BG = self.helpDescrFont.render(t3, True, (BG))
+            t3FG = self.helpDescrFont.render(t3, True, (FG))
+            t4BG = self.helpDescrFont.render(t4, True, (BG))
+            t4FG = self.helpDescrFont.render(t4, True, (FG))
+            t5BG = self.helpDescrFont.render(t5, True, (BG))
+            t5FG = self.helpDescrFont.render(t5, True, (FG))
+            t6BG = self.helpDescrFont.render(t6, True, (BG))
+            t6FG = self.helpDescrFont.render(t6, True, (FG))
 
+            t7BG = self.helpDescrFont.render(t7, True, (BG))
+            t7FG = self.helpDescrFont.render(t7, True, (FG))
+            t8BG = self.helpDescrFont.render(t8, True, (BG))
+            t8FG = self.helpDescrFont.render(t8, True, (FG))
+            t9BG = self.helpDescrFont.render(t9, True, (BG))
+            t9FG = self.helpDescrFont.render(t9, True, (FG))
+            t10BG = self.helpDescrFont.render(t10, True, (BG))
+            t10FG = self.helpDescrFont.render(t10, True, (FG))
 
-"""""
-   #### displays the current game board to the screen
-   def DisplayGameBoard(self):
-       # do this if we have at least 1 card selected
-       if (self.NumPairs() >= 1):
-           width = 80  ## print row 1
-           for row1 in range(0, 6):
+            #display to SCREEN
+            width = 40
+            height = 140
+            offset = 3
+            newLine = 35
+            self.SCREEN.blit(t1BG,(width,height))
+            self.SCREEN.blit(t1FG,(width-offset,height-offset))
+            self.SCREEN.blit(t2BG,(width,height+newLine))
+            self.SCREEN.blit(t2FG,(width-offset,(height+newLine)-offset))
+            self.SCREEN.blit(t3BG,(width,height+(newLine*2)))
+            self.SCREEN.blit(t3FG,(width-offset,(height+(newLine*2))-offset))
+            self.SCREEN.blit(t4BG,(width,height+(newLine*3)))
+            self.SCREEN.blit(t4FG,(width-offset,(height+(newLine*3))-offset))
+            self.SCREEN.blit(t5BG,(width,height+(newLine*4)))
+            self.SCREEN.blit(t5FG,(width-offset,(height+(newLine*4))-offset))
+            self.SCREEN.blit(t6BG,(width,height+(newLine*5)))
+            self.SCREEN.blit(t6FG,(width-offset,(height+(newLine*5))-offset))
+            self.SCREEN.blit(t7BG,(width,height+(newLine*6)))
+            self.SCREEN.blit(t7FG,(width-offset,(height+(newLine*6))-offset))
+            self.SCREEN.blit(t8BG,(width,height+(newLine*7)))
+            self.SCREEN.blit(t8FG,(width-offset,(height+(newLine*7))-offset))
+            self.SCREEN.blit(t9BG,(width,height+(newLine*8)))
+            self.SCREEN.blit(t9FG,(width-offset,(height+(newLine*8))-offset))
+            self.SCREEN.blit(t10BG,(width,height+(newLine*9)))
+            self.SCREEN.blit(t10FG,(width-offset,(height+(newLine*9))-offset))
 
-               if(self.IsSelectedImage(row1)):
+            self.SCREEN.blit(titleBG,(75-4,45-4))
+            self.SCREEN.blit(titleFG,(75,45))
+            self.SCREEN.blit(resumeGame,(90,515))
+            pygame.display.flip()
 
-                   # print("TRUE = ",row1)
-                   if (self.image_index <= self.number_images -1):
-                       self.SCREEN.blit(self.icons[row1],(width, self.ROW_ONE),
-                                    (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                     self.sprite_height))
-                       self.image_index += 1
-                   else:
-                       self.image_index -= 1
-                       self.SCREEN.blit(self.icons[row1],(width, self.ROW_ONE),
-                                        (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                         self.sprite_height))
-
-
-
-
-
-
-              else:
-                   image_index = 0
-                   self.SCREEN.blit(self.icons[row1], (width, self.ROW_ONE),
-                                    (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                     self.sprite_height))
-
-               width += 100
-
-
-           width = 80 ## print row 2
-           #self.image_index = 4
-           for row2 in range(6, 12):
-               if (self.IsSelectedImage(row2)):
-                   # print("TRUE = ",row1)
-                   if (self.image_index <= self.number_images - 1):
-                       self.SCREEN.blit(self.icons[row2], (width, self.ROW_TWO),
-                                        (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                         self.sprite_height))
-                       self.image_index += 1
-                   else:
-                       self.image_index -= 1
-                       self.SCREEN.blit(self.icons[row2], (width, self.ROW_TWO),
-                                        (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                         self.sprite_height))
-
-               else:
-                   image_index = 0
-                   self.SCREEN.blit(self.icons[row2], (width, self.ROW_TWO),
-                                    (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                     self.sprite_height))
-               width += 100
-
-           width = 80 ## print row 3
-           #self.image_index = 4
-           for row3 in range(12, 18):
-               if (self.IsSelectedImage(row3)):
-                   # print("TRUE = ",row1)
-                   if (self.image_index <= self.number_images - 1):
-                       self.SCREEN.blit(self.icons[row3], (width, self.ROW_THREE),
-                                        (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                         self.sprite_height))
-                       self.image_index += 1
-                   else:
-                       self.image_index -= 1
-                       self.SCREEN.blit(self.icons[row3], (width, self.ROW_THREE),
-                                        (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                         self.sprite_height))
-
-               else:
-                   image_index = 0
-                   self.SCREEN.blit(self.icons[row3], (width, self.ROW_THREE),
-                                    (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                     self.sprite_height))
-               width += 100
-
-       # NO MATCHES HAVE BEEN FOUND
-       else:
-           self.image_index = 0
-           width = 80 ## print row 1
-
-           for row1 in range(0, 6):
-               self.SCREEN.blit(self.icons[row1],(width,self.ROW_ONE),
-                                (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                 self.sprite_height))
-
-
-               width += 100
-           width = 80 ## print row 2
-           for row2 in range(6, 12):
-               self.SCREEN.blit(self.icons[row2],(width,self.ROW_TWO),
-                                (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                 self.sprite_height))
-               width += 100
-
-           width = 80 ## print row 3
-           for row3 in range(12, 18):
-               self.SCREEN.blit(self.icons[row3],(width,self.ROW_THREE),
-                                    (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                     self.sprite_height))
-               width += 100
-   """
-""""
+            for event in pygame.event.get():
+                if((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
+                    return False
+                elif(event.type == MOUSEBUTTONUP):
+                    self.DisplayWhiteScreen()
+                    pygame.display.flip()
+                    return True
 
     # determine if the user clicked on a game image/icon
     def GetSelection(self, mouseX, mouseY):
-        ##################################################################
         # help image
         if((mouseY <= 60 and mouseY >= 33)and(mouseX <= 713 and mouseX >= 687)):
             return "help"
-        ##################################################################
-
         # row 1
         elif((mouseY <= 190) and (mouseY >= 80)):
             #print("ROW 1")
@@ -709,4 +645,8 @@ class GameBoard(object):
                 if(self.IsSelectedImage(17) == False):
                     return 17  # image 18
         return -1
-"""
+
+    # displays a blank white background image to the screen
+    def DisplayWhiteScreen(self):
+        self.SCREEN.fill((255,255,255,255))
+# http://programmingnotes.freeweq.com/
