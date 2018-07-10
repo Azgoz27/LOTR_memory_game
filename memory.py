@@ -8,7 +8,7 @@ from gameMusic import *
 
 # These are default attributes that will be used for the program. They're
 # passed to the "gameBoard" class and can be changed in the future if so desired
-NUM_PAIRS = 9 # total num of possible matching pairs at any given time
+NUM_PAIRS = 12 # total num of possible matching pairs at any given time
 NUM_PICS = 27
 
 def main():
@@ -108,8 +108,6 @@ def main():
                     # get selection for turn #1
                     elif ((numGuesses % 2) == 0):
                         SELECTION_ONE = game_Board.GetSelection(mouseX, mouseY)
-                        print("selection one: ", SELECTION_ONE)
-                        print(type(SELECTION_ONE))
                         if (SELECTION_ONE > -1):
                             game_Music.PlayCardSoundFX()
                             game_Board.AppendSelection(SELECTION_ONE)
@@ -118,8 +116,6 @@ def main():
                     else:
                         print(type(SELECTION_TWO))
                         SELECTION_TWO = game_Board.GetSelection(mouseX, mouseY)
-                        print("selection two: ", SELECTION_TWO)
-                        print(type(SELECTION_TWO))
                         if (SELECTION_TWO > -1):
                             game_Music.PlayCardSoundFX()
                             game_Board.AppendSelection(SELECTION_TWO)

@@ -8,16 +8,17 @@ class GameBoard(object):
         self.GAME_TITLE1 = "THE LORD OF THE RINGS"
         self.GAME_TITLE2 = "MEMORY GAME"
         self.TITLE_CAPTION = "THE LORD OF THE RINGS - MEMORY GAME"
-        self.ROW_ONE = 100
-        self.ROW_TWO = 250
-        self.ROW_THREE = 400
+        self.ROW_ONE = 200
+        self.ROW_TWO = 350
+        self.ROW_THREE = 500
+        self.ROW_FOUR = 650
         self.WINDOW_WIDTH = 1440
         self.WINDOW_HEIGHT = 900
         self.TABLE_WIDTH = 900
         self.TABLE_HEIGHT = 600
         self.NUM_PICS = 27
-        self.NUM_CARDS = 18
-        self.NUM_PAIRS = 9
+        self.NUM_CARDS = 24
+        self.NUM_PAIRS = 12
         self.NUM_RANKS = 4
         self.images = []
         self.gamePieces = []
@@ -25,7 +26,7 @@ class GameBoard(object):
         self.table_left = 250
 
         self.number_of_columns = 6
-        self.number_of_rows = 3
+        self.number_of_rows = 4
         self.number_of_players = 1
         self.board = []
         self.pairs = []
@@ -348,71 +349,87 @@ class GameBoard(object):
     def DisplayGameBoard(self):
         # do this if we have at least 1 card selected
         if (self.NumPairs() >= 1):
-            width = 80  ## print row 1
+            width = 300  ## print row 1
             for row1 in range(0, 6):
                 if(self.IsSelectedImage(row1)):
+                    image_index = 3
                     # print("TRUE = ",row1)
-                    if (self.image_index <= self.number_images - 1):
-                        self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE), (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                    self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE), (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                          self.sprite_height))
-                        self.image_index += 1
-                        self.clock.wait(50)
-                    else:
-                        self.image_index -= 1
-                        #print("FALSE = ",row1)
-                        self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                else:
+
+                    #print("FALSE = ",row1)
+                    self.SCREEN.blit(self.gamePieces[row1],(width, self.ROW_ONE),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                          self.sprite_height))
                 width += 100
 
-            width = 80 ## print row 2
+            width = 300 ## print row 2
             for row2 in range(6, 12):
                 if(self.IsSelectedImage(row2)):
-                    if (self.image_index <= self.number_images - 1):
-                        self.SCREEN.blit(self.gamePieces[row2],(width, self.ROW_ONE), (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                    image_index = 3
+                    self.SCREEN.blit(self.gamePieces[row2],(width, self.ROW_TWO), (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                          self.sprite_height))
-                        self.image_index += 1
-                    else:
-                        self.image_index -= 1
+
+                else:
+
+
                         #print("FALSE = ",row1)
-                        self.SCREEN.blit(self.gamePieces[row2],(width, self.ROW_ONE),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
-                                         self.sprite_height))
+                        self.SCREEN.blit(self.gamePieces[row2],(width, self.ROW_TWO),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                             self.sprite_height))
                 width += 100
 
-            width = 80 ## print row 3
+            width = 300 ## print row 3
             for row3 in range(12, 18):
                 if(self.IsSelectedImage(row3)):
-                    if (self.image_index <= self.number_images - 1):
-                        self.SCREEN.blit(self.gamePieces[row3],(width, self.ROW_ONE), (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                    image_index = 3
+                    self.SCREEN.blit(self.gamePieces[row3],(width, self.ROW_THREE), (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                          self.sprite_height))
-                        self.image_index += 1
-                    else:
-                        self.image_index -= 1
-                        #print("FALSE = ",row1)
-                        self.SCREEN.blit(self.gamePieces[row3],(width, self.ROW_ONE),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                else:
+                    self.SCREEN.blit(self.gamePieces[row3],(width, self.ROW_THREE),(self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                          self.sprite_height))
+
                 width += 100
 
-        # NO MATCHES HAVE BEEN FOUND
+            width = 300  ## print row 1
+            for row4 in range(18, 24):
+                if (self.IsSelectedImage(row4)):
+                    image_index = 3
+                    # print("TRUE = ",row1)
+                    self.SCREEN.blit(self.gamePieces[row4], (width, self.ROW_FOUR),
+                                         (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                          self.sprite_height))
+                else:
+                    self.SCREEN.blit(self.gamePieces[row4], (width, self.ROW_FOUR),
+                                         (self.image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                          self.sprite_height))
+                width += 100# NO MATCHES HAVE BEEN FOUND
         else:
             image_index = 0
-            width = 80 ## print row 1
+            width = 300 ## print row 1
             for row1 in range(0, 6):
+
                 self.SCREEN.blit(self.gamePieces[row1],(width,self.ROW_ONE),(image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                          self.sprite_height))
                 width += 100
-            width = 80 ## print row 2
+            width = 300 ## print row 2
 
             for row2 in range(6, 12):
                 self.SCREEN.blit(self.gamePieces[row2],(width,self.ROW_TWO),(image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                          self.sprite_height))
                 width += 100
 
-            width = 80 ## print row 3
+            width = 300 ## print row 3
             for row3 in range(12, 18):
                 self.SCREEN.blit(self.gamePieces[row3],(width,self.ROW_THREE), (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
                                          self.sprite_height))
                 width += 100
 
+            width = 300  ## print row 3
+            for row4 in range(18, 24):
+                self.SCREEN.blit(self.gamePieces[row4], (width, self.ROW_FOUR),
+                                 (image_index * self.sprite_x, self.sprite_y, self.sprite_width,
+                                  self.sprite_height))
+                width += 100
     # determines if a specific card has been selected within our list
     # return true if current selection is in our list, else false
     def IsSelectedImage(self, checkMatch):
@@ -434,7 +451,7 @@ class GameBoard(object):
         self.SCREEN.blit(self.background_Image,(0,0))
         displayScore = self.currentScoreFont.render("Number of Guesses: %d" %
             (numGuesses), True, (255,255,255))
-        resumeGame = self.directionsFont.render("Click Anywhere To Continue!",
+        resumeGame = self.proceed.render("Click Anywhere To Continue!",
             True, (255,255,255))
 
         # display the game over ranks
@@ -582,71 +599,99 @@ class GameBoard(object):
         if((mouseY <= 60 and mouseY >= 33)and(mouseX <= 713 and mouseX >= 687)):
             return "help"
         # row 1
-        elif((mouseY <= 190) and (mouseY >= 80)):
+        elif((mouseY <= 290) and (mouseY >= 180)):
             #print("ROW 1")
-            if((mouseX <= 170) and (mouseX >=80)):
+            if((mouseX <= 390) and (mouseX >=300)):
                 if(self.IsSelectedImage(0) == False):
                     return 0  # image 1
-            elif((mouseX <= 270) and (mouseX >= 180)):
+            elif((mouseX <= 490) and (mouseX >= 400)):
                 if(self.IsSelectedImage(1) == False):
                     return 1  # image 2
-            elif((mouseX <= 370) and (mouseX >= 280)):
+            elif((mouseX <= 590) and (mouseX >= 500)):
                 if(self.IsSelectedImage(2) == False):
                     return 2  # image 3
-            elif((mouseX <= 470) and (mouseX >= 380)):
+            elif((mouseX <= 690) and (mouseX >= 600)):
                 if(self.IsSelectedImage(3) == False):
                     return 3  # image 4
-            elif((mouseX <= 570) and (mouseX >= 480)):
+            elif((mouseX <= 790) and (mouseX >= 700)):
                 if(self.IsSelectedImage(4) == False):
                     return 4   # image 5
-            elif((mouseX <= 670) and (mouseX >= 580)):
+            elif((mouseX <= 890) and (mouseX >= 800)):
                 if(self.IsSelectedImage(5) == False):
                     return 5  # image 6
+                
         # row 2
-        elif((mouseY <= 340) and (mouseY >= 250)):
+        elif((mouseY <= 440) and (mouseY >= 350)):
             #print("ROW 2")
-            if((mouseX <= 170) and (mouseX >= 80)):
+            if((mouseX <= 390) and (mouseX >= 300)):
                 if(self.IsSelectedImage(6) == False):
                     return 6  # image 7
-            elif((mouseX <= 270) and (mouseX >= 180)):
+            elif((mouseX <= 490) and (mouseX >= 400)):
                 if(self.IsSelectedImage(7) == False):
                     return 7  # image 8
-            elif((mouseX <= 370) and (mouseX >= 280)):
+            elif((mouseX <= 590) and (mouseX >= 500)):
                 if(self.IsSelectedImage(8) == False):
                     return 8  # image 9
-            elif((mouseX <= 470) and (mouseX >= 380)):
+            elif((mouseX <= 690) and (mouseX >= 600)):
                 if(self.IsSelectedImage(9) == False):
                     return 9  # image 10
-            elif((mouseX <= 570) and (mouseX >= 480)):
+            elif((mouseX <= 790) and (mouseX >= 700)):
                 if(self.IsSelectedImage(10) == False):
                     return 10  # image 11
-            elif((mouseX <= 670) and (mouseX >= 580)):
+            elif((mouseX <= 890) and (mouseX >= 800)):
                 if(self.IsSelectedImage(11) == False):
                     return 11  # image 12
         # row 3
-        elif((mouseY <= 490) and (mouseY >= 400)):
+        elif((mouseY <= 590) and (mouseY >= 500)):
             #print("ROW 3")
-            if((mouseX <= 170) and (mouseX >= 80)):
+            if((mouseX <= 390) and (mouseX >= 300)):
                 if(self.IsSelectedImage(12) == False):
                     return 12  # image 13
-            elif((mouseX <= 270) and (mouseX >= 180)):
+            elif((mouseX <= 490) and (mouseX >= 400)):
                 if(self.IsSelectedImage(13) == False):
                     return 13  # image 14
-            elif((mouseX <= 370) and (mouseX >= 280)):
+            elif((mouseX <= 590) and (mouseX >= 500)):
                 if(self.IsSelectedImage(14) == False):
                     return 14  # image 15
-            elif((mouseX <= 470) and (mouseX >= 380)):
+            elif((mouseX <= 690) and (mouseX >= 600)):
                 if(self.IsSelectedImage(15) == False):
                     return 15  # image 16
-            elif((mouseX <= 570) and (mouseX >= 480)):
+            elif((mouseX <= 790) and (mouseX >= 700)):
                 if(self.IsSelectedImage(16) == False):
                     return 16  # image 17
-            elif((mouseX <= 670) and (mouseX >= 580)):
+            elif((mouseX <= 890) and (mouseX >= 800)):
                 if(self.IsSelectedImage(17) == False):
                     return 17  # image 18
+
+
+        elif ((mouseY <= 740) and (mouseY >= 650)):
+            # print("ROW 4")
+            if ((mouseX <= 390) and (mouseX >= 300)):
+                if (self.IsSelectedImage(18) == False):
+                    return 18  # image 13
+            elif ((mouseX <= 490) and (mouseX >= 400)):
+                if (self.IsSelectedImage(19) == False):
+                    return 19  # image 14
+            elif ((mouseX <= 590) and (mouseX >= 500)):
+                if (self.IsSelectedImage(20) == False):
+                    return 20  # image 15
+            elif ((mouseX <= 690) and (mouseX >= 600)):
+                if (self.IsSelectedImage(21) == False):
+                    return 21  # image 16
+            elif ((mouseX <= 790) and (mouseX >= 700)):
+                if (self.IsSelectedImage(22) == False):
+                    return 22  # image 17
+            elif ((mouseX <= 890) and (mouseX >= 800)):
+                if (self.IsSelectedImage(23) == False):
+                    return 23  # image 18
+
+
+
+
+
+
+
         return -1
 
-    # displays a blank white background image to the screen
-    def DisplayWhiteScreen(self):
-        self.SCREEN.fill((255,255,255,255))
-# http://programmingnotes.freeweq.com/
+
+
