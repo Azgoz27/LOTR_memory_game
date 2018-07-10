@@ -1,5 +1,6 @@
 #####################################
 #THE LORD OF THE RINGS - MEMORY GAME#
+#   created by Tomislav Stančerić   #
 #####################################
 
 from gameBoard import *
@@ -15,8 +16,12 @@ def main():
     inGame = False
     numGuesses = 0
     numPairs = 0
-    SELECTION_ONE = -1
-    SELECTION_TWO = -1
+    SELECTION_ONE = None
+    SELECTION_TWO = None
+    mouseX = 0
+    mouseY = 0
+    boxx = None
+    boxy = None
     clock = pygame.time
     game_Board = GameBoard()
     game_Music = Music("intro.wav","inGame.ogg","card.ogg",
@@ -29,132 +34,171 @@ def main():
     game_Board.InitializeGameData()
     game_Board.RandomizeGamePieces()
     game_Board.DisplayStartScreen()
+
     # start the intro music
-    #game_Music.PlayIntro()
+    game_Music.PlayIntro()
 
     # this displays the initial START MENU to the screen
     while(not inGame):
         inGame = game_Board.DisplayStartScreen()
-    #    inGame = game_Board.setup_menu()
-    #    clock.wait(70) # do this so the CPU doesnt work too hard
+        clock.wait(100)
 
     # stop the intro music
     game_Music.StopIntro()
 
     # this is the main game loop which is the START OF THE GAME
     while(inGame):
+        mouseClicked = False
         game_Board.DisplayIngameBackground(numGuesses, numPairs)
-        #game_Music.PlayInGame()
+        #pygame.display.flip()
 
-        # if the game has not ended, keep going
+        game_Music.PlayInGame()
+
+
         if(numPairs < NUM_PAIRS):
 
-            # display initial gameboard to screen
             if(game_Board.NumPairs() < 1):
-                #print("NO MATCHES")
+                print("NO MATCHES!")#######################
                 game_Board.DisplayGameBoard()
+                pygame.display.update()
 
-            # display updated gameboard with uncovered cards
             elif(game_Board.NumPairs() > 0):
                 game_Board.DisplayGameBoard()
                 pygame.display.update()
 
-                # if the user makes 2 selections, determine if they're a match
-                if((SELECTION_ONE > -1) and (SELECTION_TWO > -1)):
-                    #print(SELECTION_ONE)
-                    #print(SELECTION_TWO)
+                if((SELECTION_ONE != None) and (SELECTION_TWO != None)):
+                    print(SELECTION_ONE, SELECTION_TWO)
                     clock.wait(1000)
 
-                    # event handling loop - discard any selections
-                    # the user makes while detrmining a match
                     for event in pygame.event.get():
                         if(event.type == MOUSEBUTTONUP):
                             continue
-                            #print("DISCARD SELECTION")
 
-                    # do this if they're a match
-                    if(game_Board.IsPair(SELECTION_ONE, SELECTION_TWO)):
-                        #print("\nMATCH\n")
+                    if(game_Board.isPair(SELECTION_ONE,SELECTION_TWO)):
                         numPairs += 1
                         game_Music.PlayPairSoundFX()
 
-                    # do this if not a match
                     else:
-                        #print("\nNOT MATCH\n")
                         game_Music.PlayNoPairSoundFX()
                         game_Board.RemoveSelection()
                         game_Board.RemoveSelection()
-                    SELECTION_ONE = -1
-                    SELECTION_TWO = -1
+                    SELECTION_ONE = None
+                    SELECTION_TWO = None
 
-            # GET MOUSE EVENTS
-            for event in pygame.event.get(): # event handling loop
-                if((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
+             # GET MOUSE EVENTS
+            for event in pygame.event.get():  # event handling loop
+                if ((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
                     print("EXITING..")
                     inGame = False
 
-                # get mouse motions
-                if(event.type == MOUSEMOTION):
+             # get mouse motions
+                elif (event.type == MOUSEMOTION):
                     mouseX, mouseY = event.pos
-                    #print("x = ",mouseX," y = ",mouseY)
+                    # print("x = ",mouseX," y = ",mouseY)
 
                 # get mouse clicks
-                elif(event.type == MOUSEBUTTONUP):
+                elif (event.type == MOUSEBUTTONUP):
                     mouseX, mouseY = event.pos
-                    #print("MOUSE CLIKED")
-                    #print("x = ",mouseX," y = ",mouseY)
+                    mouseClicked = True
+                    # print("MOUSE CLIKED")
+                    # print("x = ",mouseX," y = ",mouseY)
 
                     # if the user clicks the help icon
-                    if(game_Board.GetSelection(mouseX, mouseY) == "help"):
-                        #print("HELP ICON")
-                        game_Music.PauseInGame()
-                        game_Music.PlayHelp()
-                        #inGame = game_Board.DisplayHelp()
-                        inGame = game_Board.setup_menu_1()
-                        game_Music.StopHelp()
-                        game_Music.ResumeInGame()
+                    #if (game_Board.GetSelection(mouseX, mouseY) == "help"):
+                    # print("HELP ICON")
+                    #    game_Music.PauseInGame()
+                    #    game_Music.PlayHelp()
+                    #    inGame = game_Board.DisplayHelp()
+                    #    game_Music.StopHelp()
+                    #    game_Music.ResumeInGame()
 
-                    # get selection for turn #1
-                    elif((numGuesses % 2) == 0):
-                        SELECTION_ONE = game_Board.GetSelection(mouseX, mouseY)
-                        #print("TURN 1")
-                        if(SELECTION_ONE > -1):
-                            game_Music.PlayCardSoundFX()
-                            game_Board.AppendSelection(SELECTION_ONE)
-                            numGuesses += 1
-                    # get selection for turn #2
-                    else:
-                        SELECTION_TWO = game_Board.GetSelection(mouseX, mouseY)
-                        #print("TURN 2")
-                        if(SELECTION_TWO > -1):
-                            game_Music.PlayCardSoundFX()
-                            game_Board.AppendSelection(SELECTION_TWO)
-                            numGuesses += 1
+
+        boxx, boxy = game_Board.getBoxAtPixel(mouseX, mouseY)
+        if boxx != None and boxy != None:
+            if not game_Board.revealedBoxes[boxx][boxy] and mouseClicked:
+                game_Board.revealBoxesAnimation(mainBoard, [boxx, boxy])
+                game_Board.revealedBoxes[boxx][boxy] = True
+                if SELECTION_ONE == None:
+                    SELECTION_ONE = (boxx, boxy)
+                else:
+                    icon11, icon12 = SELECTION_ONE[0], SELECTION_ONE[1]
+                    icon21, icon22 = boxx, boxy
+                    if icon11 != icon21 or icon12 != icon22:
+                        pygame.time.wait(1000)
+                        game_Board.coverBoxesAnimation(mainBoard,[SELECTION_ONE[0],SELECTION_ONE[1], (boxx, boxy)])
+                        game_Board.revealedBoxes[SELECTION_ONE[0]][SELECTION_ONE[1]] = False
+                        game_Board.revealedBoxes[boxx][boxy] = False
+
+                    elif game_Board.hasWon(revealedBoxes):
+
+
+
 
         # GAME IS OVER display end of game screen to user
-        else:
-            #print(numPairs)
-            #print(game_Board.NumPairs())
-            #print("NUMBER OF GUESSES = ",numGuesses/2)
-            game_Board.DisplayGameBoard()
-            pygame.display.update()
-            clock.wait(2000)
-            game_Music.StopInGame()
-            game_Music.PlayWinSoundFX()
-            game_Music.PlayGameOver()
-            inGame = game_Board.GameOver(numGuesses)
-            game_Music.StopGameOver()
-            #game_Board.DisplayWhiteScreen()
-            game_Board.ReInitializeBoard()
-            numGuesses = 0
-            numPairs = 0
+        #else:
+                        print(numPairs)
+                        print(game_Board.NumPairs())
+                        print("NUMBER OF GUESSES = ", numGuesses / 2)
+                        game_Board.DisplayGameBoard()
+                        pygame.display.update()
+                        clock.wait(2000)
+                        game_Music.StopInGame()
+                        #game_Music.PlayWinSoundFX()
+                        game_Music.PlayGameOver()
+                        inGame = game_Board.GameOver(numGuesses)
+                        game_Music.StopGameOver()
+                        game_Board.ReInitializeBoard()
+                        numGuesses = 0
+                        numPairs = 0
         pygame.display.flip()
-        clock.wait(70) # do this so the CPU doesnt work too hard
+        clock.wait(100)  # do this so the CPU doesnt work too hard
 
     # end game if user doesnt want to play again
-    print("\nThanks For Playing!!!")
+    # print("\nThanks For Playing!!!")
     pygame.quit()
     sys.exit()
 
 if __name__ == '__main__':
     main()
+
+
+
+"""
+            game_Board.boxx, game_Board.boxy = game_Board.getBoxAtPixel(mousex, mousey)
+            if game_Board.boxx != None and boxy != None:
+                #The mouse is cureently over a box
+
+                if not revealedBoxes[game_Board.boxx][game_Board.boxy]:
+                game_Board.drawHighlightBox(game_Board.boxx, game_Board.boxy)
+                if not revealedBoxes[game_Board.boxx][game_Board.boxy] and mouseClicked:
+                    revealBoxesAnimation(mainBoard, [(game_Board.boxx, game_Board.boxy)])
+                    revealedBoxes[game_Board.boxx][game_Board.boxy] = True # set the box as "revealed"
+                    if selection_one == None: # the current box was the first box clicked
+                        selection_one = (game_Board.boxx, game_Board.boxy)
+                    else:  # the current box was the second box clicked
+                      # Check if there is a match between the two icons.
+                        selection_two = (game_Board.boxx, game_Board.boxy)
+
+                        if selection_one != selection_two:
+                        # Icons don't match. Re-cover up both selections.
+                         pygame.time.wait(1000) # 1000 milliseconds = 1 sec
+                         coverBoxesAnimation(ainBoard, [(selection_one, selection_two), (boxx, boxy)])
+
+
+                         pygame.time.wait(2000)
+
+                        # Reset the board
+                         mainBoard = getRandomizedBoard()
+                         revealedBoxes = generateRevealedBoxesData(False)
+
+                         # Show the fully unrevealed board for a second.
+                         drawBoard(mainBoard, revealedBoxes)
+                         pygame.display.update()
+                         pygame.time.wait(1000)
+
+                        # Replay the start game animation.
+                         startGameAnimation(mainBoard)
+                    firstSelection = None # reset firstSelection variable
+"""
+
+

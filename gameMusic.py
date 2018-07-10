@@ -1,14 +1,3 @@
-# =============================================================================
-#   Name:  Kenneth Perkins
-#   Date:   Aug 8, 2013
-#   Taken From: http://programmingnotes.freeweq.com/
-#   File: gameMusic.py
-#   Description: This is the gameMusic.py module which sets up the game sounds
-#      and music. This class also reads files (.ogg/.wav) from the "snd"
-#      directory for use within this program. This is a memory based card game
-#      where a player tries to find matching pairs of the same type of card
-#      in a deck
-# =============================================================================
 import pygame, os
 from pygame.locals import *
 
