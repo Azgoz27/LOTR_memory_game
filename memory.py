@@ -9,7 +9,7 @@ from gameMusic import *
 # These are default attributes that will be used for the program. They're
 # passed to the "gameBoard" class and can be changed in the future if so desired
 NUM_PAIRS = 12 # total num of possible matching pairs at any given time
-NUM_PICS = 27
+NUM_PICS = 28
 
 def main():
     # variable and class declarations which are used in main
@@ -99,11 +99,14 @@ def main():
                     # if the user clicks the help icon
                     if (game_Board.GetSelection(mouseX, mouseY) == "help"):
                     # print("HELP ICON")
-                        game_Music.PauseInGame()
-                        game_Music.PlayHelp()
-                        inGame = game_Board.DisplayHelp()
-                        game_Music.StopHelp()
-                        game_Music.ResumeInGame()
+                        #game_Music.PauseInGame()
+                        #game_Music.PlayHelp()
+                        #inGame = game_Board.DisplayHelp()
+                        #game_Music.StopHelp()
+                        #game_Music.ResumeInGame()
+                        game_Board.ReInitializeBoard()
+                        numGuesses = 0
+                        numPairs = 0
 
                     # get selection for turn #1
                     elif ((numGuesses % 2) == 0):

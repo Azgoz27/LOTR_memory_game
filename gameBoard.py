@@ -16,7 +16,7 @@ class GameBoard(object):
         self.WINDOW_HEIGHT = 900
         self.TABLE_WIDTH = 900
         self.TABLE_HEIGHT = 600
-        self.NUM_PICS = 27
+        self.NUM_PICS = 28
         self.NUM_CARDS = 24
         self.NUM_PAIRS = 12
         self.NUM_RANKS = 4
@@ -155,8 +155,8 @@ class GameBoard(object):
                 pygame.quit()
                 sys.exit()
             elif (event.type == MOUSEBUTTONUP):
-                self.setup_menu_1()
-                pygame.display.flip()
+                #self.setup_menu_1()
+                #pygame.display.flip()
                 return True
         pygame.display.flip()
         return False
@@ -200,17 +200,17 @@ class GameBoard(object):
                     pygame.quit()
                     sys.exit()
                 elif event.type == KEYDOWN:
-                    # if event.key == K_BACKSPACE:
-                    #    input_1 = input_1[:-1]
-                    # elif event.unicode.isdigit():
-                    #    input_1 += event.unicode
-                    if event.key == K_RETURN:
-                        # input_1 = []
-                        # input_1 = int(input_1[0])
-                        # print(type(input_1))
-                        # print(input_1)
-                        self.setup_menu_2()
-                        return True
+                     if event.key == K_BACKSPACE:
+                        input_1 = input_1[:-1]
+                     elif event.unicode.isdigit():
+                        input_1 += event.unicode
+                     if event.key == K_RETURN:
+                         input_1 = []
+                         input_1 = int(input_1[0])
+                         print(type(input_1))
+                         print(input_1)
+                         self.setup_menu_2()
+                         return True
             user_input = self.input_font.render(input_1, True, (255, 215, 0))
             rect = user_input.get_rect(center=(700, 600))
             self.SCREEN.blit(user_input, rect)
@@ -254,17 +254,17 @@ class GameBoard(object):
                     pygame.quit()
                     sys.exit()
                 elif event.type == KEYDOWN:
-                    # if event.unicode.isdigit():
-                    #    self.number_of_rows += event.unicode
-                    # elif event.key == K_BACKSPACE:
-                    #    self.number_of_rows = self.number_of_rows[:-1]
-                    if event.key == K_RETURN:
-                        #    self.number_of_rows = ""
+                     if event.unicode.isdigit():
+                        self.number_of_rows += event.unicode
+                     elif event.key == K_BACKSPACE:
+                        self.number_of_rows = self.number_of_rows[:-1]
+                     if event.key == K_RETURN:
+                        self.number_of_rows = ""
                         self.setup_menu_3()
                         return True
-            # user_input = self.input_font.render(self.number_of_rows, True, (255, 215, 0))
-            # rect = user_input.get_rect(center=(700, 600))
-            # self.SCREEN.blit(user_input, rect)
+            user_input = self.input_font.render(self.number_of_rows, True, (255, 215, 0))
+            rect = user_input.get_rect(center=(700, 600))
+            self.SCREEN.blit(user_input, rect)
             pygame.display.flip()
 
     def setup_menu_3(self):
@@ -304,16 +304,16 @@ class GameBoard(object):
                     pygame.quit()
                     sys.exit()
                 elif event.type == KEYDOWN:
-                #    if event.unicode.isdigit():
-            #        self.number_of_players += event.unicode
-                #    elif event.key == K_BACKSPACE:
-            #        self.number_of_players = self.number_of_players[:-1]
-                    if event.key == K_RETURN:
-                        #    self.number_of_players = ""
+                    if event.unicode.isdigit():
+                        self.number_of_players += event.unicode
+                    elif event.key == K_BACKSPACE:
+                        self.number_of_players = self.number_of_players[:-1]
+                        if event.key == K_RETURN:
+                            self.number_of_players = ""
                         return True
-            # user_input = self.input_font.render(self.number_of_players, True, (255, 215, 0))
-            # rect = user_input.get_rect(center=(700, 600))
-            # self.SCREEN.blit(user_input, rect)
+            user_input = self.input_font.render(self.number_of_players, True, (255, 215, 0))
+            rect = user_input.get_rect(center=(700, 600))
+            self.SCREEN.blit(user_input, rect)
             pygame.display.flip()
 
     # displays the main background image (the table and the help button)
@@ -441,61 +441,18 @@ class GameBoard(object):
     # display the game over Menu to the screen
     def GameOver(self,numGuesses):
         inGame = False
-        width = 220
-        height = 215
-        bull = 3
-        donkey = 2
-        cat = 1
-        fish = 0
+        self.SCREEN.blit(self.background_Image, (0, 0))
         numGuesses = int(numGuesses/2)
-        self.SCREEN.blit(self.background_Image,(0,0))
         displayScore = self.currentScoreFont.render("Number of Guesses: %d" %
-            (numGuesses), True, (255,255,255))
-        resumeGame = self.proceed.render("Click Anywhere To Continue!",
-            True, (255,255,255))
-
-        # display the game over ranks
-        if(numGuesses >= 25): # bull
-            self.SCREEN.blit(self.ranks[bull],(width,height))
-            desc = self.currentScoreFont.render("Rank: BULL (May Need Glasses)",
-                True, (255,255,255))
-            desc2 = self.currentScoreFont.render("You Bulldozed Your Way To "
-                "Completion Through Brute Force", True, (255,255,255))
-            self.SCREEN.blit(desc,(180,95))
-            self.SCREEN.blit(desc2,(15,145))
-
-        elif(numGuesses >= 21): # donkey
-            self.SCREEN.blit(self.ranks[donkey],(width,height))
-            desc = self.currentScoreFont.render("Memory Rank: DONKEY (Average)",
-                True, (255,255,255))
-            desc2 = self.currentScoreFont.render("You Passively Trotted Your Way "
-                "To Completion", True, (255,255,255))
-            self.SCREEN.blit(desc,(180,95))
-            self.SCREEN.blit(desc2,(105,145))
-
-        elif(numGuesses >= 17): # cat
-            self.SCREEN.blit(self.ranks[cat],(width,height))
-            desc = self.currentScoreFont.render("Memory Rank: CAT (Smart)", True,
-                (255,255,255))
-            desc2 = self.currentScoreFont.render("You Cautiously Pawed Your Way "
-                "To Completion", True, (255,255,255))
-            self.SCREEN.blit(desc,(190,95))
-            self.SCREEN.blit(desc2,(90,145))
-
-        else: # fish
-            self.SCREEN.blit(self.ranks[fish],(width,height))
-            desc = self.currentScoreFont.render("Memory Rank: FISH (Genius)",
-                True, (255,255,255))
-            desc2 = self.currentScoreFont.render("You Sifted Your Way To "
-                "Completion Like A Fish In Water", True, (255,255,255))
-            self.SCREEN.blit(desc,(180,95))
-            self.SCREEN.blit(desc2,(25,145))
-
-        self.SCREEN.blit(displayScore,(230,35))
-        self.SCREEN.blit(resumeGame,(90,515))
+            (numGuesses), True, (255, 255, 255))
+        resumeGame = self.proceed.render("Click Anywhere To Start New Game!",
+            True, (255, 255, 255))
+        self.SCREEN.blit(self.rank_button,(600,350))
+        self.SCREEN.blit(displayScore,(400, 250))
+        self.SCREEN.blit(resumeGame,(350,650))
 
         while(not inGame):
-            self.clock.wait(70)
+            self.clock.wait(100)
             pygame.display.flip()
             for event in pygame.event.get():
                 if((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
@@ -503,101 +460,18 @@ class GameBoard(object):
                 elif(event.type == MOUSEBUTTONUP):
                     return True
 
-    # display the help menu to the screen
-    def DisplayHelp(self):
-        inGame = False
-        titleHeight = 100
-        titleWidth = 150
-        t1 = "Kenneth's Memory Game is a mind stimulating educational"
-        t2 = "card game in which an assortment of cards are laid face "
-        t3 = "down on a surface, and the player tries to uncover two"
-        t4 = "identical pairs. If the two cards match, they are"
-        t5 = "removed from gameplay. If they do not match, the cards"
-        t6 = "are turned back over. The object of the game is to find"
-        t7 = "pairs of two matching cards in the fewest number of"
-        t8 = "turns possible. This game can be played alone or with"
-        t9 = "multiple players, and is especially challenging for children"
-        t10 = "and adults alike."
-        screenTitle = "About"
 
-        self.SCREEN.blit(self.background_Image,(0,0))
 
-        while(not inGame):
-            self.clock.wait(70)
-            #directions
-            #black
-            titleBG = self.titleFont.render(screenTitle, True, (0,0,0))
-            #yellow
-            titleFG = self.titleFont.render(screenTitle, True, (225,225,0))
-            resumeGame = self.directionsFont.render("Click Anywhere To Continue!", True, (255,255,255))
-            BG = (0,0,0)
-            FG = (255,255,0)
-            t1BG = self.helpDescrFont.render(t1, True, (BG))
-            t1FG = self.helpDescrFont.render(t1, True, (FG))
-            t2BG = self.helpDescrFont.render(t2, True, (BG))
-            t2FG = self.helpDescrFont.render(t2, True, (FG))
-            t3BG = self.helpDescrFont.render(t3, True, (BG))
-            t3FG = self.helpDescrFont.render(t3, True, (FG))
-            t4BG = self.helpDescrFont.render(t4, True, (BG))
-            t4FG = self.helpDescrFont.render(t4, True, (FG))
-            t5BG = self.helpDescrFont.render(t5, True, (BG))
-            t5FG = self.helpDescrFont.render(t5, True, (FG))
-            t6BG = self.helpDescrFont.render(t6, True, (BG))
-            t6FG = self.helpDescrFont.render(t6, True, (FG))
+        pygame.display.flip()
 
-            t7BG = self.helpDescrFont.render(t7, True, (BG))
-            t7FG = self.helpDescrFont.render(t7, True, (FG))
-            t8BG = self.helpDescrFont.render(t8, True, (BG))
-            t8FG = self.helpDescrFont.render(t8, True, (FG))
-            t9BG = self.helpDescrFont.render(t9, True, (BG))
-            t9FG = self.helpDescrFont.render(t9, True, (FG))
-            t10BG = self.helpDescrFont.render(t10, True, (BG))
-            t10FG = self.helpDescrFont.render(t10, True, (FG))
 
-            #display to SCREEN
-            width = 40
-            height = 140
-            offset = 3
-            newLine = 35
-            self.SCREEN.blit(t1BG,(width,height))
-            self.SCREEN.blit(t1FG,(width-offset,height-offset))
-            self.SCREEN.blit(t2BG,(width,height+newLine))
-            self.SCREEN.blit(t2FG,(width-offset,(height+newLine)-offset))
-            self.SCREEN.blit(t3BG,(width,height+(newLine*2)))
-            self.SCREEN.blit(t3FG,(width-offset,(height+(newLine*2))-offset))
-            self.SCREEN.blit(t4BG,(width,height+(newLine*3)))
-            self.SCREEN.blit(t4FG,(width-offset,(height+(newLine*3))-offset))
-            self.SCREEN.blit(t5BG,(width,height+(newLine*4)))
-            self.SCREEN.blit(t5FG,(width-offset,(height+(newLine*4))-offset))
-            self.SCREEN.blit(t6BG,(width,height+(newLine*5)))
-            self.SCREEN.blit(t6FG,(width-offset,(height+(newLine*5))-offset))
-            self.SCREEN.blit(t7BG,(width,height+(newLine*6)))
-            self.SCREEN.blit(t7FG,(width-offset,(height+(newLine*6))-offset))
-            self.SCREEN.blit(t8BG,(width,height+(newLine*7)))
-            self.SCREEN.blit(t8FG,(width-offset,(height+(newLine*7))-offset))
-            self.SCREEN.blit(t9BG,(width,height+(newLine*8)))
-            self.SCREEN.blit(t9FG,(width-offset,(height+(newLine*8))-offset))
-            self.SCREEN.blit(t10BG,(width,height+(newLine*9)))
-            self.SCREEN.blit(t10FG,(width-offset,(height+(newLine*9))-offset))
-
-            self.SCREEN.blit(titleBG,(75-4,45-4))
-            self.SCREEN.blit(titleFG,(75,45))
-            self.SCREEN.blit(resumeGame,(90,515))
-            pygame.display.flip()
-
-            for event in pygame.event.get():
-                if((event.type == QUIT) or (event.type == KEYUP and event.key == K_ESCAPE)):
-                    return False
-                elif(event.type == MOUSEBUTTONUP):
-                    self.DisplayWhiteScreen()
-                    pygame.display.flip()
-                    return True
 
     # determine if the user clicked on a game image/icon
     def GetSelection(self, mouseX, mouseY):
         # help image
-        if((mouseY <= 60 and mouseY >= 33)and(mouseX <= 713 and mouseX >= 687)):
+        if((mouseY <= 130 and mouseY >= 50) and (mouseX <= 1430 and mouseX >= 1350)):
             return "help"
+
         # row 1
         elif((mouseY <= 290) and (mouseY >= 180)):
             #print("ROW 1")
@@ -684,13 +558,6 @@ class GameBoard(object):
             elif ((mouseX <= 890) and (mouseX >= 800)):
                 if (self.IsSelectedImage(23) == False):
                     return 23  # image 18
-
-
-
-
-
-
-
         return -1
 
 
